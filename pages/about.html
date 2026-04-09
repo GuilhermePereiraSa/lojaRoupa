@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="stylesheet" href="../css/about.css">
+    
+    <!--  -->
+    <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
+
+    <title>Sobre - Ecommerce</title>
+</head>
+<body>
+    <section id="header">
+        <!-- logo? image here  - class logo
+        space between - logo and list below 
+        -->
+        
+        <div>
+            <ul id="navbar">
+                <li><a href="../index.html">Início</a></li>
+                <li><a href="shop.html">Loja</a></li>
+                <li><a class="active" href="about.html">Sobre</a></li>
+                <li><a href="contact.html">Contato</a></li>
+                <li><a href="cart.html"><i class="ri-shopping-bag-line"></i></a></li>
+            </ul>
+        </div>
+
+    </section>
+
+    <section id="about">
+        <h2>Sobre Nós</h2>
+        <p>Somos uma loja dedicada a oferecer roupas de alta qualidade com estilo e conforto. Nossa missão é vestir você com o melhor.</p>
+    </section>
+
+    <div id="footer-container"></div>
+
+    <script>
+        fetch('footer.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('footer-container').innerHTML = data;
+            });
+    </script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="stylesheet" href="../css/shop.css">
+    
+    <!--  -->
+    <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
+
+    <title>Loja - Ecommerce</title>
+</head>
+<body>
+    <section id="header">
+        <!-- logo? image here  - class logo
+        space between - logo and list below 
+        -->
+        
+        <div>
+            <ul id="navbar">
+                <li><a href="../index.html">Início</a></li>
+                <li><a class="active" href="shop.html">Loja</a></li>
+                <li><a href="about.html">Sobre</a></li>
+                <li><a href="contact.html">Contato</a></li>
+                <li><a href="cart.html"><i class="ri-shopping-bag-line"></i></a></li>
+            </ul>
+        </div>
+
+    </section>
+
+    </section>
+
+    <div id="footer-container"></div>
+
+    <script>
+        fetch('footer.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('footer-container').innerHTML = data;
+            });
+    </script>
+</body>
+</html>
