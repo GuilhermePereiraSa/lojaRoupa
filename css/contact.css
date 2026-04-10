@@ -1,6 +1,49 @@
 @import url("globals.css");
 @import url("footer.css");
 
+
+#contact {
+    text-align: center;
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 20px;
+}
+
+#contact form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+#contact label {
+    align-self: flex-start;
+    margin-bottom: 5px;
+}
+
+#contact input,
+#contact textarea {
+    width: 100%;
+    max-width: 400px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+#contact button {
+    padding: 10px 20px;
+    background-color: #088178;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+#contact button:hover {
+    background-color: #065a52;
+}
+
 body {
   width: 100%;
   min-height: 100vh;
