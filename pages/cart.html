@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="stylesheet" href="../css/cart.css">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <!--  -->
+    <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
+
+    <title>Carrinho - Loja Leila</title>
+</head>
+<body>
+    <section id="header">
+        <!-- logo? image here  - class logo
+        space between - logo and list below 
+        -->
+        
+        <div>
+            <ul id="navbar">
+                <li><a href="../index.html">Início</a></li>
+                <li><a href="shop.html">Loja Leila</a></li>
+                <li><a href="about.html">Sobre</a></li>
+                <li><a href="contact.html">Contato</a></li>
+                <li><a class="active" href="cart.html"><i class="ri-shopping-bag-line"></i></a></li>
+            </ul>
+        </div>
+
+    </section>
+
+    <section id="cart">
+        <h2>Seu Carrinho</h2>
+        <p>Seus itens selecionados aparecerão aqui.</p>
+        <div id="cart-items">
+            <!-- Itens do carrinho serão adicionados dinamicamente -->
+        </div>
+        <div id="cart-total">
+            <p>Total: R$ 0,00</p>
+            <button class="btn">Finalizar Compra</button>
+        </div>
+    </section>
+
+    <div id="footer-container"></div>
+
+    <script>
+        fetch('footer.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('footer-container').innerHTML = data;
+            });
+    </script>
+    <script src="../scripts/cart.js"></script>
+</body>
+</html>

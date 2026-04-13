@@ -99,3 +99,55 @@ body {
 .btn:hover {
     background: #065a52;
 }
+
+/* About Section */
+#about {
+    padding: 40px 80px;
+    text-align: center;
+}
+
+#about h2 {
+    font-size: 36px;
+    margin-bottom: 20px;
+    color: #088178;
+}
+
+#about p {
+    font-size: 18px;
+    line-height: 1.6;
+    margin-bottom: 40px;
+}
+
+.about-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    gap: 20px;
+}
+
+.about-section {
+    width: 45%;
+    min-width: 300px;
+    text-align: left;
+    margin-bottom: 30px;
+}
+
+.about-section h3 {
+    font-size: 24px;
+    margin-bottom: 15px;
+    color: #1a1a1a;
+}
+
+.about-section p {
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+.about-section ul {
+    list-style-type: disc;
+    padding-left: 20px;
+}
+
+.about-section li {
+    margin-bottom: 10px;
+}

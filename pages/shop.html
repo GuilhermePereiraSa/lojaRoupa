@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <link rel="stylesheet" href="../css/shop.css">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     
     <!--  -->
     <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
@@ -20,7 +22,7 @@
         <div>
             <ul id="navbar">
                 <li><a href="../index.html">Início</a></li>
-                <li><a class="active" href="shop.html">Loja</a></li>
+                <li><a class="active" href="shop.html">Loja Leila</a></li>
                 <li><a href="about.html">Sobre</a></li>
                 <li><a href="contact.html">Contato</a></li>
                 <li><a href="cart.html"><i class="ri-shopping-bag-line"></i></a></li>
@@ -54,7 +56,7 @@
                     </div>
                     <h4>R$ 50,00</h4>
                 </div>
-                <a href="#"><i class="bi bi-cart2 cart"></i></a>
+                <button class="add-to-cart" data-name="Conjunto Casual" data-price="50.00" data-img="../img/products/f6.jpg">Adicionar ao Carrinho</button>
             </div>
             <div class="pro">
                 <img src="../img/products/f7.jpg" alt="Roupa 2">
@@ -70,7 +72,7 @@
                     </div>
                     <h4>R$ 80,00</h4>
                 </div>
-                <a href="#"><i class="bi bi-cart2 cart"></i></a>
+                <button class="add-to-cart" data-name="Calça Florida" data-price="80.00" data-img="../img/products/f7.jpg">Adicionar ao Carrinho</button>
             </div>
             <div class="pro">
                 <img src="../img/products/n1.jpg" alt="Roupa 3">
@@ -86,7 +88,7 @@
                     </div>
                     <h4>R$ 120,00</h4>
                 </div>
-                <a href="#"><i class="bi bi-cart2 cart"></i></a>
+                <button class="add-to-cart" data-name="Vestido Elegante" data-price="120.00" data-img="../img/products/n1.jpg">Adicionar ao Carrinho</button>
             </div>
             <div class="pro">
                 <img src="../img/products/n2.jpg" alt="Roupa 4">
@@ -102,10 +104,10 @@
                     </div>
                     <h4>R$ 60,00</h4>
                 </div>
-                <a href="#"><i class="bi bi-cart2 cart"></i></a>
+                <button class="add-to-cart" data-name="Blusa Inverno" data-price="60.00" data-img="../img/products/n2.jpg">Adicionar ao Carrinho</button>
             </div>
             <div class="pro">
-                <img src="../img/products/f8.jpg" alt="Roupa 4">
+                <img src="../img/products/f8.jpg" alt="Roupa 5">
                 <div class="des">
                     <span>Marca</span>
                     <h5>Gatinhos</h5>
@@ -118,7 +120,7 @@
                     </div>
                     <h4>R$ 37,99</h4>
                 </div>
-                <a href="#"><i class="bi bi-cart2 cart"></i></a>
+                <button class="add-to-cart" data-name="Gatinhos" data-price="37.99" data-img="../img/products/f8.jpg">Adicionar ao Carrinho</button>
             </div>
             <div class="pro">
                 <img src="../img/products/n3.jpg" alt="Roupa 4">
@@ -134,7 +136,7 @@
                     </div>
                     <h4>R$ 219,99</h4>
                 </div>
-                <a href="#"><i class="bi bi-cart2 cart"></i></a>
+                <button class="add-to-cart" data-name="Social" data-price="219.99" data-img="../img/products/n3.jpg">Adicionar ao Carrinho</button>
             </div>
             <div class="pro">
                 <img src="../img/products/n5.jpg" alt="Roupa 4">
@@ -150,7 +152,7 @@
                     </div>
                     <h4>R$ 119,99</h4>
                 </div>
-                <a href="#"><i class="bi bi-cart2 cart"></i></a>
+                <button class="add-to-cart" data-name="Jeans" data-price="119.99" data-img="../img/products/n5.jpg">Adicionar ao Carrinho</button>
             </div>
             <div class="pro">
                 <img src="../img/products/n8.jpg" alt="Roupa 4">
@@ -166,7 +168,7 @@
                     </div>
                     <h4>R$ 69,99</h4>
                 </div>
-                <a href="#"><i class="bi bi-cart2 cart"></i></a>
+                <button class="add-to-cart" data-name="Blusa Escura" data-price="69.99" data-img="../img/products/n8.jpg">Adicionar ao Carrinho</button>
             </div>
         </div>
     </section>
@@ -185,6 +187,26 @@
             .then(data => {
                 document.getElementById('footer-container').innerHTML = data;
             });
+
+        // Cart functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            const addToCartButtons = document.querySelectorAll('.add-to-cart');
+            addToCartButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const name = button.getAttribute('data-name');
+                    const price = parseFloat(button.getAttribute('data-price'));
+                    const img = button.getAttribute('data-img');
+                    addToCart(name, price, img);
+                    alert(`${name} adicionado ao carrinho!`);
+                });
+            });
+        });
+
+        function addToCart(name, price, img) {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            cart.push({ name, price, img });
+            localStorage.setItem('cart', JSON.stringify(cart));
+        }
     </script>
 </body>
 </html>
