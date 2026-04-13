@@ -1,5 +1,6 @@
 @import url("globals.css");
 @import url("footer.css");
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css");
 
 body {
   width: 100%;
@@ -41,11 +42,11 @@ body {
 /* active - been on the current page underline */
 
 #navbar li a:hover,
-#navbar li a:hover.active{
+#navbar li a.active{
     color: #088178;
 }
 
-#navbar li a:hover.active::after,
+#navbar li a.active::after,
 #navbar li a:hover::after{
     content: "";
     width: 30%;
@@ -55,4 +56,132 @@ body {
     bottom: -4px;
     left: 20px;
      
+}
+
+/* Hero Section */
+#hero {
+    background-image: url("../img/banner/b2.jpg");
+    padding: 40px 80px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.hero-container {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.hero-text {
+    width: 40%;
+    padding-left: 20px;
+}
+
+.hero-text h1,
+.hero-text p {
+    color: #e6e7cd;
+}
+
+/* Products Section */
+#products {
+    text-align: center;
+}
+
+#products h2 {
+    font-size: 36px;
+    margin-bottom: 20px;
+}
+
+.pro-container {
+    display: flex;
+    justify-content: space-around;
+    padding-top: 20px;
+    flex-wrap: wrap;
+}
+
+.pro {
+    width: 23%;
+    min-width: 250px;
+    padding: 10px 12px;
+    border: 1px solid #cce7d0;
+    border-radius: 25px;
+    cursor: pointer;
+    box-shadow: 20px 20px 30px rgba(0,0,0,0.02);
+    margin: 15px 0;
+    transition: 0.2s ease;
+    position: relative;
+}
+
+.pro:hover {
+    box-shadow: 20px 20px 30px rgba(0,0,0,0.06);
+}
+
+.pro img {
+    width: 100%;
+    border-radius: 20px;
+}
+
+.pro .des {
+    text-align: start;
+    padding: 10px 0;
+}
+
+.pro .des span {
+    color: #606063;
+    font-size: 12px;
+}
+
+.pro .des h5 {
+    padding-top: 7px;
+    color: #1a1a1a;
+    font-size: 14px;
+}
+
+.star {
+    color: #ffd700;
+}
+
+.pro .des i {
+    font-size: 12px;
+}
+
+.pro .des h4 {
+    padding-top: 7px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #088178;
+}
+
+.pro .cart {
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    border-radius: 50px;
+    background-color: #e8f6ea;
+    font-weight: 500;
+    color: #088178;
+    border: 1px solid #cce7d0;
+    position: absolute;
+    bottom: 20px;
+    right: 10px;
+}
+
+#pagination {
+    text-align: center;
+}
+
+#pagination a {
+    text-decoration: none;
+    background-color: #088178;
+    padding: 15px 20px;
+    border-radius: 4px;
+    color: white;
+    font-weight: 600;
+}
+
+#pagination a i {
+    font-size: 20px;
 }
