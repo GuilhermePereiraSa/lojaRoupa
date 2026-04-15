@@ -9,59 +9,10 @@ body {
   flex-direction: column;
 }
 
-#header{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 20px 80px;
-    background: #E3E6F3;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.06);
-}
-
-#navbar{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-#navbar li{
-    list-style: none;
-    padding: 0 20px;
-    /* position absolute of active after */
-    position: relative;
-}
-
-#navbar li a{
-    text-decoration: none;
-    font-size: 16px;
-    font-weight: 600;
-    color: #1a1a1a;
-    transition: 0.3s ease;
-}
-
-/* active - been on the current page underline */
-
-#navbar li a:hover,
-#navbar li a.active{
-    color: #088178;
-}
-
-#navbar li a.active::after,
-#navbar li a:hover::after{
-    content: "";
-    width: 30%;
-    height: 2px;
-    background-color: #088178;
-    position: absolute;
-    bottom: -4px;
-    left: 20px;
-     
-}
-
 /* Hero Section */
 #hero {
     background-image: url("../img/banner/b2.jpg");
-    padding: 40px 80px;
+    padding: 40px 10px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -184,4 +135,14 @@ body {
 
 #pagination a i {
     font-size: 20px;
+}
+
+@media (max-width: 600px) {
+    #hero {
+        padding: 40px 10px;
+    }
+    .hero-text {
+        width: 80%;
+        padding-left: 20px;
+    }
 }
