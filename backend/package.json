@@ -1,0 +1,29 @@
+{
+  "name": "lojaroupa",
+  "version": "1.0.0",
+  "description": "Um template de uma lojinha online onde implementamos para pessoas leigas na computação que trabalham de maneira informal, como por exemplo com fornecedores que te indicam por WhatsApp quais roupas você se interessa a comprar, para revendar de forma local, na sua própria casa. UFA! BAITA TRABALHÃO! Imagina o número de fornecedores, de clientes a atender, e além do mais, pagamentos ainda não realizados, mesmo após pega do produto.",
+  "main": "script/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^4.22.1",
+    "jsonwebtoken": "^9.0.3",
+    "qrcode-terminal": "^0.12.0",
+    "whatsapp-web.js": "^1.34.6"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GuilhermePereiraSa/lojaRoupa.git"
+  },
+  "bugs": {
+    "url": "https://github.com/GuilhermePereiraSa/lojaRoupa/issues"
+  },
+  "homepage": "https://github.com/GuilhermePereiraSa/lojaRoupa#readme"
+}
