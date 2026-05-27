@@ -1,60 +1,89 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <link rel="stylesheet" href="../css/about.css">
-    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
-    
-    <!--  -->
-    <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Sobre - Ecommerce</title>
-</head>
-<body>
-    <section id="header">
-        <!-- logo? image here  - class logo
-        space between - logo and list below 
+        <link rel="stylesheet" href="../css/about.css" />
+        <link
+            href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css"
+            rel="stylesheet"
+        />
+
+        <!--  -->
+        <link
+            rel="stylesheet"
+            href="path/to/font-awesome/css/font-awesome.min.css"
+        />
+        <script src="../scripts/init.js" defer></script>
+        <title>Sobre - Ecommerce</title>
+    </head>
+    <body>
+        <section id="header">
+            <!-- logo? image here  - class logo
+        space between - logo and list below
         -->
-        
-        <div>
-            <ul id="navbar">
-                <li><a href="../index.html">Início</a></li>
-                <li><a href="shop.html">Loja Leila</a></li>
-                <li><a class="active" href="about.html">Sobre</a></li>
-                <li><a href="contact.html">Contato</a></li>
-                <li><a href="cart.html"><i class="ri-shopping-bag-line"></i></a></li>
-            </ul>
-        </div>
 
-    </section>
-
-    <section id="about">
-        <h2>Sobre Nós</h2>
-        <p>Bem-vindo à Loja Leila, fundada por Dona Leila, uma empreendedora dedicada que transforma a moda acessível em uma experiência prática e confiável.</p>
-        
-        <div class="about-content">
-            <div class="about-section">
-                <h3>Nossa História</h3>
-                <p>A Loja Leila nasceu da paixão de Dona Leila por oferecer roupas de qualidade a preços justos. Como uma revendedora experiente, ela calcula valores competitivos com seus fornecedores para garantir o melhor para seus clientes. Inicialmente operando apenas via WhatsApp, com grupos de divulgação e conversas privadas para pedidos e fornecedores, a loja agora evoluiu para um site moderno para facilitar o acesso e a formalização das vendas.</p>
+            <div>
+                <ul id="navbar">
+                    <li><a href="../index.html">Início</a></li>
+                    <li><a href="shop.html">Loja Leila</a></li>
+                    <li><a class="active" href="about.html">Sobre</a></li>
+                    <li><a href="contact.html">Contato</a></li>
+                    <li>
+                        <a href="cart.html"
+                            ><i class="ri-shopping-bag-line"></i
+                        ></a>
+                    </li>
+                </ul>
             </div>
-            
-            <div class="about-section">
-                <h3>Missão</h3>
-                <p>Oferecer roupas de alta qualidade através de revenda, unificando a visualização de produtos e promovendo vendas formais com opções de pagamento seguras, como cartão de crédito, débito e Pix, para eliminar a informalidade e facilitar a experiência de compra.</p>
+        </section>
+
+        <section id="about">
+            <h2>Sobre Nós</h2>
+            <p>
+                Bem-vindo à Loja Leila, fundada por Dona Leila, uma
+                empreendedora dedicada que transforma a moda acessível em uma
+                experiência prática e confiável.
+            </p>
+
+            <div class="about-content">
+                <div class="about-section">
+                    <h3>Nossa História</h3>
+                    <p>
+                        A Loja Leila nasceu da paixão de Dona Leila por oferecer
+                        roupas de qualidade a preços justos. Como uma
+                        revendedora experiente, ela calcula valores competitivos
+                        com seus fornecedores para garantir o melhor para seus
+                        clientes. Inicialmente operando apenas via WhatsApp, com
+                        grupos de divulgação e conversas privadas para pedidos e
+                        fornecedores, a loja agora evoluiu para um site moderno
+                        para facilitar o acesso e a formalização das vendas.
+                    </p>
+                </div>
+
+                <div class="about-section">
+                    <h3>Missão</h3>
+                    <p>
+                        Oferecer roupas de alta qualidade através de revenda,
+                        unificando a visualização de produtos e promovendo
+                        vendas formais com opções de pagamento seguras, como
+                        cartão de crédito, débito e Pix, para eliminar a
+                        informalidade e facilitar a experiência de compra.
+                    </p>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <div id="footer-container"></div>
+        <div id="footer-container"></div>
 
-    <script>
-        fetch('footer.html')
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('footer-container').innerHTML = data;
-            });
-    </script>
-</body>
+        <script>
+            fetch("footer.html")
+                .then((response) => response.text())
+                .then((data) => {
+                    document.getElementById("footer-container").innerHTML =
+                        data;
+                });
+        </script>
+    </body>
 </html>

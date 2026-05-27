@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Criar Conta - Loja Leila</title>
+        <link rel="stylesheet" href="/css/style.min.css" />
+        <script defer src="/js/register.js"></script>
+    </head>
+    <body class="login">
+        <div class="container">
+            <h2 class="text-center">Criar Conta</h2>
+            <br />
+            <form id="formRegistro">
+                <div class="input-group">
+                    <label for="reg-username" class="label"
+                        >Novo Username</label
+                    >
+                    <input
+                        type="text"
+                        id="reg-username"
+                        class="input"
+                        required
+                    />
+                </div>
+                <br />
+                <div class="input-group">
+                    <label for="reg-password" class="label"
+                        >Senha (mín. 8 caracteres)</label
+                    >
+                    <input
+                        type="password"
+                        id="reg-password"
+                        class="input"
+                        required
+                        minlength="8"
+                    />
+                </div>
+                <br />
+                <button class="button" type="submit">Cadastrar</button>
+            </form>
+            <div style="text-align: center; margin-top: 15px">
+                <a href="loginForms.html">Já tem uma conta? Entre aqui.</a>
+            </div>
+        </div>
+    </body>
+</html>
