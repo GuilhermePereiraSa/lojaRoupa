@@ -5,7 +5,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const checkoutBtn = document.getElementById("checkout-btn");
 
   if (checkoutBtn) {
-    // Adicionamos o "async" aqui para poder usar o "await" no fetch
     checkoutBtn.addEventListener("click", async (e) => {
       e.preventDefault();
 
@@ -48,12 +47,56 @@ document.addEventListener("DOMContentLoaded", () => {
         const data = await response.json();
 
         if (response.ok) {
-          alert("Pedido finalizado com sucesso!");
-          localStorage.removeItem("cart"); // Esvazia o carrinho no front
-          displayCart(); // Atualiza a tela
-          // window.location.href = "sucesso.html"; // Opcional: redirecionar para tela de sucesso
+          // =========================================================
+          // INÍCIO DA LÓGICA DO PIX (Substitui o alert e displayCart)
+          // =========================================================
+
+          // Selecionamos a tag <section> principal que engloba o carrinho no seu HTML
+          const cartSection = document.querySelector("section");
+
+          // Trocamos o conteúdo da tela pelo QR Code e a chave Copia e Cola
+          cartSection.innerHTML = `
+              <div style="text-align: center; padding: 2rem;">
+                  <h2>Pedido #${data.orderId} Fechado com Sucesso!</h2>
+                  <p>Escaneie o QR Code abaixo no aplicativo do seu banco para pagar:</p>
+
+                  <img src="${data.pix.qrCodeImage}" alt="QR Code Pix" style="width: 250px; height: 250px; border: 1px solid #ccc; border-radius: 8px; margin: 1rem 0;">
+
+                  <p>Ou utilize o Pix Copia e Cola:</p>
+                  <input type="text" value="${data.pix.copiaECola}" id="pix-input" readonly style="width: 100%; max-width: 400px; padding: 10px; margin-bottom: 10px; text-align: center; border: 1px solid #aaa; border-radius: 4px;">
+                  <br>
+                  <button id="copy-btn" style="padding: 10px 20px; cursor: pointer; background-color: #28a745; color: white; border: none; border-radius: 4px; font-weight: bold;">Copiar Código Pix</button>
+              </div>
+          `;
+
+          // Adicionamos a lógica para o botão "Copiar Código Pix" funcionar
+          document.getElementById("copy-btn").addEventListener("click", () => {
+            const pixInput = document.getElementById("pix-input");
+
+            // Usamos a API moderna de Clipboard do navegador
+            navigator.clipboard
+              .writeText(pixInput.value)
+              .then(() => {
+                alert("Código Pix copiado para a área de transferência!");
+              })
+              .catch((err) => {
+                console.error("Erro ao copiar", err);
+                // Fallback para navegadores mais antigos
+                pixInput.select();
+                document.execCommand("copy");
+                alert("Código Pix copiado para a área de transferência!");
+              });
+          });
+
+          // Limpa o carrinho local, pois o pedido já foi gerado no banco de dados
+          localStorage.removeItem("cart");
+
+          // =========================================================
+          // FIM DA LÓGICA DO PIX
+          // =========================================================
         } else {
-          alert("Erro ao processar pedido: " + data.message);
+          // Exibe a mensagem de erro que vier do backend
+          alert("Erro ao processar pedido: " + (data.error || data.message));
         }
       } catch (error) {
         console.error("Erro no checkout:", error);
@@ -62,6 +105,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+
+// Suas funções auxiliares continuam exatamente iguais:
 
 function displayCart() {
   const cart = JSON.parse(localStorage.getItem("cart")) || [];
