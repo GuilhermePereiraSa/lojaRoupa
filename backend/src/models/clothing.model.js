@@ -1,6 +1,6 @@
 import { Model, DataTypes } from "sequelize";
 
-import sequelize from "./dbconfig";
+import sequelize from "./dbconfig.js";
 
 class Clothing extends Model {}
 

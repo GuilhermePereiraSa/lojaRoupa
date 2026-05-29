@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import User from "../models/User.model.js";
+import User from "../models/user.model.js";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 dotenv.config();
@@ -87,6 +87,10 @@ export const login = async (req, res) => {
 };
 
 export const logout = async (req, res, next) => {
-  req.logout();
-  res.status(204).json();
+  return (
+    res
+      .status(200)
+      // remova o token no front
+      .json({ message: "Logout bem sucedido." })
+  );
 };
