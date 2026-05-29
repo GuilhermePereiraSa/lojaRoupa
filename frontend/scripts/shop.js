@@ -19,17 +19,23 @@ async function fetchProducts() {
 
 function renderProducts(products) {
   const container = document.querySelector(".pro-container");
-  container.innerHTML = ""; // Limpa qualquer conteúdo anterior
+  container.innerHTML = "";
 
   products.forEach((product) => {
-    // Garantindo que o preço será formatado corretamente
     const priceFormatted = parseFloat(product.price)
       .toFixed(2)
       .replace(".", ",");
 
+    // Lógica para consertar o caminho da imagem:
+    // Se a imagem for do upload do multer (começa com /public), usa o localhost:3001
+    // Se for as inseridas manualmente no PostgreSQL (../img), mantém igual
+    const imageUrl = product.image.startsWith("/public")
+      ? `http://localhost:3001${product.image}`
+      : product.image;
+
     const productHTML = `
               <div class="pro">
-                  <img src="${product.image}" alt="${product.name}" />
+                  <img src="${imageUrl}" alt="${product.name}" />
                   <div class="des">
                       <span>Loja Leila</span>
                       <h5>${product.name} (Tam: ${product.size})</h5>
@@ -55,7 +61,6 @@ function renderProducts(products) {
     container.innerHTML += productHTML;
   });
 
-  // atrelar o evento de clique neles novamente
   attachCartEvents();
 }
 
