@@ -1,175 +1,83 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt-BR">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Painel Admin - Loja Leila</title>
-
-        <link rel="stylesheet" href="../css/shop.css" />
-        <script>
-            const token = localStorage.getItem("Token");
-            if (!token) {
-                window.location.href = "login.html";
-            } else {
-                try {
-                    // Lê rapidamente o token
-                    const payload = JSON.parse(atob(token.split(".")[1]));
-                    // Se o isAdmin não for true, bloqueia o acesso
-                    if (payload.isAdmin !== true) {
-                        alert(
-                            "Acesso Negado: Esta página é exclusiva para a Dona Leila (Administradores).",
-                        );
-                        window.location.href = "shop.html"; // Chuta para a vitrine
-                    }
-                } catch (e) {
-                    window.location.href = "login.html";
-                }
+        <link rel="stylesheet" href="../css/style.css" />
+        <style>
+            .admin-container {
+                max-width: 1000px;
+                margin: 2rem auto;
+                padding: 0 1rem;
+                font-family: sans-serif;
             }
-        </script>
-
-        <script src="../scripts/init.js" defer></script>
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 1rem;
+            }
+            th,
+            td {
+                padding: 12px;
+                border: 1px solid #ddd;
+                text-align: left;
+            }
+            th {
+                background-color: #f4f4f4;
+            }
+            .status-pendente {
+                background-color: #fff3cd;
+                color: #856404;
+                padding: 5px 10px;
+                border-radius: 4px;
+                font-weight: bold;
+            }
+            .status-pago {
+                background-color: #d4edda;
+                color: #155724;
+                padding: 5px 10px;
+                border-radius: 4px;
+                font-weight: bold;
+            }
+            .btn-confirmar {
+                background-color: #28a745;
+                color: white;
+                border: none;
+                padding: 8px 12px;
+                border-radius: 4px;
+                cursor: pointer;
+                font-weight: bold;
+            }
+            .btn-confirmar:hover {
+                background-color: #218838;
+            }
+        </style>
     </head>
     <body>
-        <section id="header">
-            <div>
-                <ul id="navbar">
-                    <li><a href="../index.html">Início</a></li>
-                    <li><a href="shop.html">Loja Leila</a></li>
-                    <li><a href="about.html">Sobre</a></li>
-                    <li><a href="contact.html">Contato</a></li>
-                    <li>
-                        <a href="cart.html"
-                            ><i class="ri-shopping-bag-line"></i
-                        ></a>
-                    </li>
-                </ul>
-            </div>
-        </section>
+        <div class="admin-container">
+            <h1>Painel de Pedidos - Dona Leila</h1>
+            <p>
+                Instruções: Olhe o aplicativo do seu banco. Se o dinheiro do
+                pedido caiu na conta, clique no botão verde
+                <strong>"Confirmar Recebimento"</strong>.
+            </p>
 
-        <section id="admin-panel" class="section-p1">
-            <h2>Cadastrar Nova Roupa</h2>
-            <p>Preencha os dados e envie a foto do novo produto.</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nº do Pedido</th>
+                        <th>Data/Hora</th>
+                        <th>Itens Comprados</th>
+                        <th>Valor Total</th>
+                        <th>Status Atual</th>
+                        <th>Ação</th>
+                    </tr>
+                </thead>
+                <tbody id="admin-orders-table"></tbody>
+            </table>
+        </div>
 
-            <form id="formAdmin" style="max-width: 400px; margin-top: 20px">
-                <div style="margin-bottom: 15px">
-                    <label>Nome da Peça:</label><br />
-                    <input
-                        type="text"
-                        id="nome"
-                        placeholder="Ex: Vestido Florido"
-                        required
-                        style="width: 100%; padding: 8px"
-                    />
-                </div>
-
-                <div style="margin-bottom: 15px">
-                    <label>Preço (R$):</label><br />
-                    <input
-                        type="number"
-                        step="0.01"
-                        id="preco"
-                        placeholder="99.90"
-                        required
-                        style="width: 100%; padding: 8px"
-                    />
-                </div>
-
-                <div style="margin-bottom: 15px">
-                    <label>Tamanho:</label><br />
-                    <select
-                        id="tamanho"
-                        required
-                        style="width: 100%; padding: 8px"
-                    >
-                        <option value="P">Pequeno (P)</option>
-                        <option value="M">Médio (M)</option>
-                        <option value="G">Grande (G)</option>
-                    </select>
-                </div>
-
-                <div style="margin-bottom: 15px">
-                    <label>Foto do Produto:</label><br />
-                    <input
-                        type="file"
-                        id="imagem"
-                        accept="image/*"
-                        required
-                        style="width: 100%; padding: 8px"
-                    />
-                </div>
-
-                <button
-                    type="submit"
-                    style="
-                        padding: 10px 20px;
-                        background-color: #088178;
-                        color: white;
-                        border: none;
-                        cursor: pointer;
-                    "
-                >
-                    Salvar Produto
-                </button>
-            </form>
-        </section>
-
-        <script>
-            document
-                .getElementById("formAdmin")
-                .addEventListener("submit", async (e) => {
-                    e.preventDefault();
-
-                    const token = localStorage.getItem("Token");
-
-                    // FormData empacota o texto e o arquivo juntos
-                    const formData = new FormData();
-                    formData.append(
-                        "name",
-                        document.getElementById("nome").value,
-                    );
-                    formData.append(
-                        "price",
-                        document.getElementById("preco").value,
-                    );
-                    formData.append(
-                        "size",
-                        document.getElementById("tamanho").value,
-                    );
-                    formData.append(
-                        "image",
-                        document.getElementById("imagem").files[0],
-                    );
-
-                    try {
-                        // Lembra da porta 3001!
-                        const response = await fetch(
-                            "http://localhost:3001/api/produtos",
-                            {
-                                method: "POST",
-                                headers: {
-                                    // Enviamos o JWT para o guarda-costas do Back-end
-                                    Authorization: `Bearer ${token}`,
-                                    // IMPORTANTE: Ao usar FormData com Fetch, NÃO defina o "Content-Type".
-                                    // O navegador fará isso automaticamente e colocará a tag 'boundary' da imagem.
-                                },
-                                body: formData,
-                            },
-                        );
-
-                        const data = await response.json();
-                        if (response.ok) {
-                            alert(
-                                "Produto cadastrado com sucesso! Vá até a loja para conferir.",
-                            );
-                            document.getElementById("formAdmin").reset(); // Limpa o formulário
-                        } else {
-                            alert("Erro: " + data.message);
-                        }
-                    } catch (error) {
-                        console.error("Erro no upload:", error);
-                        alert("Erro de comunicação com o servidor.");
-                    }
-                });
-        </script>
+        <script src="../scripts/admin.js"></script>
     </body>
 </html>
