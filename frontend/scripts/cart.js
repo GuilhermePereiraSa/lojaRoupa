@@ -39,7 +39,6 @@ document.addEventListener("DOMContentLoaded", () => {
             Authorization: `Bearer ${token}`, // Passando o JWT para o middleware
           },
           body: JSON.stringify({
-            totalPrice: totalPrice,
             items: cart,
           }),
         });

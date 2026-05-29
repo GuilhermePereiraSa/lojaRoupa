@@ -16,10 +16,14 @@ export const verifyToken = (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    req.user = decoded;
+    req.userId = decoded.id; // Pendura o ID na requisição para o próximo controlador
     next();
   } catch (error) {
-    return res.status(401).json({ message: "Token inválido ou expirado." });
+    if (error.name === "TokenExpiredError") {
+      return res.status(401).json({ message: "Token expirado." });
+    }
+
+    return res.status(401).json({ message: "Token inválido." });
   }
 };
 
