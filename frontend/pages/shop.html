@@ -5,6 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
         <link rel="stylesheet" href="../css/shop.css" />
+
         <link
             href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css"
             rel="stylesheet"
@@ -14,12 +15,9 @@
             rel="stylesheet"
         />
 
-        <!--  -->
-        <link
-            rel="stylesheet"
-            href="path/to/font-awesome/css/font-awesome.min.css"
-        />
         <script src="../scripts/init.js" defer></script>
+        <script src="../scripts/shop.js" defer></script>
+
         <title>Loja - Ecommerce</title>
     </head>
     <body>
@@ -53,192 +51,7 @@
         </section>
 
         <section id="products" class="section-p1">
-            <div class="pro-container">
-                <div class="pro">
-                    <img src="../img/products/f6.jpg" alt="Roupa 1" />
-                    <div class="des">
-                        <span>Marca</span>
-                        <h5>Conjunto Casual</h5>
-                        <div class="star">
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                        </div>
-                        <h4>R$ 50,00</h4>
-                    </div>
-                    <button
-                        class="add-to-cart"
-                        data-name="Conjunto Casual"
-                        data-price="50.00"
-                        data-img="../img/products/f6.jpg"
-                    >
-                        Adicionar ao Carrinho
-                    </button>
-                </div>
-                <div class="pro">
-                    <img src="../img/products/f7.jpg" alt="Roupa 2" />
-                    <div class="des">
-                        <span>Marca</span>
-                        <h5>Calça Florida</h5>
-                        <div class="star">
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                        </div>
-                        <h4>R$ 80,00</h4>
-                    </div>
-                    <button
-                        class="add-to-cart"
-                        data-name="Calça Florida"
-                        data-price="80.00"
-                        data-img="../img/products/f7.jpg"
-                    >
-                        Adicionar ao Carrinho
-                    </button>
-                </div>
-                <div class="pro">
-                    <img src="../img/products/n1.jpg" alt="Roupa 3" />
-                    <div class="des">
-                        <span>Marca</span>
-                        <h5>Vestido Elegante</h5>
-                        <div class="star">
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                        </div>
-                        <h4>R$ 120,00</h4>
-                    </div>
-                    <button
-                        class="add-to-cart"
-                        data-name="Vestido Elegante"
-                        data-price="120.00"
-                        data-img="../img/products/n1.jpg"
-                    >
-                        Adicionar ao Carrinho
-                    </button>
-                </div>
-                <div class="pro">
-                    <img src="../img/products/n2.jpg" alt="Roupa 4" />
-                    <div class="des">
-                        <span>Marca</span>
-                        <h5>Blusa Inverno</h5>
-                        <div class="star">
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                        </div>
-                        <h4>R$ 60,00</h4>
-                    </div>
-                    <button
-                        class="add-to-cart"
-                        data-name="Blusa Inverno"
-                        data-price="60.00"
-                        data-img="../img/products/n2.jpg"
-                    >
-                        Adicionar ao Carrinho
-                    </button>
-                </div>
-                <div class="pro">
-                    <img src="../img/products/f8.jpg" alt="Roupa 5" />
-                    <div class="des">
-                        <span>Marca</span>
-                        <h5>Gatinhos</h5>
-                        <div class="star">
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                        </div>
-                        <h4>R$ 37,99</h4>
-                    </div>
-                    <button
-                        class="add-to-cart"
-                        data-name="Gatinhos"
-                        data-price="37.99"
-                        data-img="../img/products/f8.jpg"
-                    >
-                        Adicionar ao Carrinho
-                    </button>
-                </div>
-                <div class="pro">
-                    <img src="../img/products/n3.jpg" alt="Roupa 4" />
-                    <div class="des">
-                        <span>Marca</span>
-                        <h5>Social</h5>
-                        <div class="star">
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                        </div>
-                        <h4>R$ 219,99</h4>
-                    </div>
-                    <button
-                        class="add-to-cart"
-                        data-name="Social"
-                        data-price="219.99"
-                        data-img="../img/products/n3.jpg"
-                    >
-                        Adicionar ao Carrinho
-                    </button>
-                </div>
-                <div class="pro">
-                    <img src="../img/products/n5.jpg" alt="Roupa 4" />
-                    <div class="des">
-                        <span>Marca</span>
-                        <h5>Jeans</h5>
-                        <div class="star">
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                        </div>
-                        <h4>R$ 119,99</h4>
-                    </div>
-                    <button
-                        class="add-to-cart"
-                        data-name="Jeans"
-                        data-price="119.99"
-                        data-img="../img/products/n5.jpg"
-                    >
-                        Adicionar ao Carrinho
-                    </button>
-                </div>
-                <div class="pro">
-                    <img src="../img/products/n8.jpg" alt="Roupa 4" />
-                    <div class="des">
-                        <span>Marca</span>
-                        <h5>Blusa Escura</h5>
-                        <div class="star">
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                        </div>
-                        <h4>R$ 69,99</h4>
-                    </div>
-                    <button
-                        class="add-to-cart"
-                        data-name="Blusa Escura"
-                        data-price="69.99"
-                        data-img="../img/products/n8.jpg"
-                    >
-                        Adicionar ao Carrinho
-                    </button>
-                </div>
-            </div>
+            <div class="pro-container"></div>
         </section>
 
         <section id="pagination" class="section-p1">

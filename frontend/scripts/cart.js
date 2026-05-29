@@ -5,17 +5,59 @@ document.addEventListener("DOMContentLoaded", () => {
   const checkoutBtn = document.getElementById("checkout-btn");
 
   if (checkoutBtn) {
-    checkoutBtn.addEventListener("click", (e) => {
+    // Adicionamos o "async" aqui para poder usar o "await" no fetch
+    checkoutBtn.addEventListener("click", async (e) => {
       e.preventDefault();
 
-      const token = localStorage.getItem("Token");
+      // Verifique se no seu login.js você salvou como "Token" ou "token"
+      const token =
+        localStorage.getItem("Token") || localStorage.getItem("token");
 
       if (!token) {
         alert("Você precisa fazer login para finalizar a compra!");
         localStorage.setItem("redirectAfterLogin", "cart.html");
         window.location.href = "login.html";
-      } else {
-        console.log("Prosseguindo para o pagamento...");
+        return; // Retorna para parar a execução
+      }
+
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+      if (cart.length === 0) {
+        alert("Seu carrinho está vazio.");
+        return;
+      }
+
+      // Calculando o total para enviar ao backend
+      const totalPrice = cart.reduce((sum, item) => sum + item.price, 0);
+
+      try {
+        console.log("Enviando pedido para o servidor...");
+
+        const response = await fetch("http://localhost:3001/api/pedidos", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // Passando o JWT para o middleware
+          },
+          body: JSON.stringify({
+            totalPrice: totalPrice,
+            items: cart,
+          }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          alert("Pedido finalizado com sucesso!");
+          localStorage.removeItem("cart"); // Esvazia o carrinho no front
+          displayCart(); // Atualiza a tela
+          // window.location.href = "sucesso.html"; // Opcional: redirecionar para tela de sucesso
+        } else {
+          alert("Erro ao processar pedido: " + data.message);
+        }
+      } catch (error) {
+        console.error("Erro no checkout:", error);
+        alert("Erro de comunicação com o servidor.");
       }
     });
   }

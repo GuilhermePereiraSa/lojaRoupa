@@ -10,12 +10,10 @@ class Login {
     let self = this;
 
     this.form.addEventListener("submit", async (e) => {
-      // Adicionado 'async'
       e.preventDefault();
 
       var error = 0;
 
-      // Executa a sua validação visual de campos
       self.fields.forEach((field) => {
         const input = document.querySelector(`#${field}`);
         if (self.validateFields(input) == false) {
@@ -23,13 +21,13 @@ class Login {
         }
       });
 
-      // Se passou na validação do front, dispara a chamada para a API
       if (error == 0) {
-        const username = document.querySelector("#username").value();
-        const password = document.querySelector("#password").value();
+        // CORREÇÃO 1: Removido os parênteses de value
+        const username = document.querySelector("#username").value;
+        const password = document.querySelector("#password").value;
 
         try {
-          const response = await fetch("http://localhost:3000/api/auth/login", {
+          const response = await fetch("http://localhost:3001/api/auth/login", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -40,13 +38,11 @@ class Login {
           const data = await response.json();
 
           if (response.ok) {
-            // Guarda Token JWT recebido do back-end
             localStorage.setItem("Token", data.token);
 
-            // Verifica se o usuário tentou fechar o carrinho antes de logar
             const redirectUrl =
               localStorage.getItem("redirectAfterLogin") || "shop.html";
-            localStorage.removeItem("redirectAfterLogin"); // Limpa o estado
+            localStorage.removeItem("redirectAfterLogin");
 
             window.location.href = redirectUrl;
           } else {
@@ -67,14 +63,16 @@ class Login {
         `${field.previousElementSibling.innerText} cannot be blank`,
         "error",
       );
+      return false; // Faltava retornar false aqui para bloquear o erro
     } else {
       if (field.type == "password") {
         if (field.value.length < 8) {
           this.setStatus(
             field,
-            `${field.previousElementSibling.innerText} cannot be blank`,
+            `${field.previousElementSibling.innerText} deve ter 8 caracteres`,
             "error",
           );
+          return false; // Faltava retornar false aqui
         } else {
           this.setStatus(field, null, "sucess");
           return true;
@@ -87,18 +85,20 @@ class Login {
   }
 
   setStatus(field, message, status) {
-    // from html
     const errorMessage = field.parentElement.querySelector(".error-message");
 
     if (status == "sucess") {
       if (errorMessage) {
-        error.errorMessage.innerText = "";
+        // CORREÇÃO 2: Estava "error.errorMessage.innerText"
+        errorMessage.innerText = "";
       }
       field.classList.remove("input-error");
     }
 
     if (status == "error") {
-      errorMessage.innerText = message;
+      if (errorMessage) {
+        errorMessage.innerText = message;
+      }
       field.classList.add("input-error");
     }
   }
@@ -108,6 +108,5 @@ const form = document.querySelector(".loginForm");
 
 if (form) {
   const fields = ["username", "password"];
-
   const validator = new Login(form, fields);
 }

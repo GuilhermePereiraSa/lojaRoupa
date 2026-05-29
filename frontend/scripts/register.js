@@ -5,18 +5,21 @@ document.addEventListener("DOMContentLoaded", () => {
     formRegistro.addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      const username = document.getElementById("reg-username").value();
-      const password = document.getElementById("reg-password").value();
+      // CORREÇÃO 1: Removido os parênteses do value
+      const username = document.getElementById("reg-username").value;
+      const password = document.getElementById("reg-password").value;
 
       try {
+        // CORREÇÃO 2: Atualizado para a porta 3001
         const response = await fetch(
-          "http://localhost:3000/api/auth/register",
+          "http://localhost:3001/api/auth/register",
           {
             method: "POST",
             headers: {
               "Content-type": "application/json",
             },
-            body: JSON.stringfy({ username, password }),
+            // CORREÇÃO 3: stringify escrito corretamente (com 'i')
+            body: JSON.stringify({ username, password }),
           },
         );
 
@@ -24,8 +27,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (response.ok) {
           alert("Conta criada com sucesso!");
-          // redireciona
-          window.location.href = "loginForms.html";
+          // CORREÇÃO 4: Apontando para o arquivo HTML correto
+          window.location.href = "login.html";
         } else {
           alert(`Erro: ${data.message}`);
         }

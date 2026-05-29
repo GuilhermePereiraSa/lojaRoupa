@@ -25,7 +25,7 @@ class AuthConfig {
       }
     } else {
       const LogIn = document.createElement("li");
-      LogIn.innerHTML = `<a href="login.html">Entrar</a>`;
+      LogIn.innerHTML = `<a href="../pages/login.html">Entrar</a>`;
       navBar.appendChild(LogIn);
     }
   }
