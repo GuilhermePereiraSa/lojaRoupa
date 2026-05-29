@@ -19,6 +19,11 @@ User.init(
       type: DataTypes.STRING,
       allowNull: false, // Onde guardaremos o hash do bcrypt
     },
+
+    isAdmin: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
   },
   {
     sequelize,
