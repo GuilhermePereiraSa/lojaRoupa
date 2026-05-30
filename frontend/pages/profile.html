@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Minha Conta - Loja Leila</title>
+        <link rel="stylesheet" href="../css/style.css" />
+    </head>
+    <body>
+        <div class="container-perfil">
+            <h2>Minha Conta</h2>
+
+            <!-- SEÇÃO 1: Dados do Usuário -->
+            <section class="perfil-info">
+                <h3>Dados Pessoais</h3>
+                <div id="dados-carregando">Carregando dados do perfil...</div>
+                <div id="dados-usuario" style="display: none">
+                    <p><strong>Nome:</strong> <span id="user-name"></span></p>
+                    <p>
+                        <strong>E-mail:</strong> <span id="user-email"></span>
+                    </p>
+                    <!-- Botão para ir para a tela de alteração de senha -->
+                    <button
+                        onclick="window.location.href = 'changePassword.html'"
+                        class="btn-secundario"
+                        style="margin-top: 15px"
+                    >
+                        Alterar Minha Senha
+                    </button>
+                </div>
+            </section>
+
+            <!-- SEÇÃO 2: Histórico de Pedidos -->
+            <section class="perfil-pedidos">
+                <h3>Meus Pedidos</h3>
+                <div class="table-responsive">
+                    <table id="tabela-pedidos">
+                        <thead>
+                            <tr>
+                                <th>ID do Pedido</th>
+                                <th>Data</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lista-pedidos">
+                            <!-- Os pedidos serão injetados aqui via JS -->
+                        </tbody>
+                    </table>
+                </div>
+                <div id="pedidos-mensagem"></div>
+            </section>
+        </div>
+
+        <script src="../scripts/profile.js"></script>
+    </body>
+</html>

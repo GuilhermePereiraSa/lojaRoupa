@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Criar Nova Senha - Loja Leila</title>
+        <!-- Adicione o link para o seu arquivo de CSS aqui -->
+    </head>
+    <body>
+        <div class="container">
+            <h2>Criar Nova Senha</h2>
+            <p>
+                Insira sua nova senha abaixo. Ela deve ter no mínimo 8
+                caracteres.
+            </p>
+
+            <form id="form-reset-password">
+                <div>
+                    <label for="novaSenha">Nova Senha:</label>
+                    <!-- Usando minlength="8" acompanhando a sua regra de validação do login -->
+                    <input
+                        type="password"
+                        id="novaSenha"
+                        required
+                        minlength="8"
+                        placeholder="No mínimo 8 caracteres"
+                    />
+                </div>
+                <button type="submit">Salvar Nova Senha</button>
+            </form>
+
+            <div
+                id="reset-message"
+                style="margin-top: 15px; font-weight: bold"
+            ></div>
+        </div>
+
+        <script src="redefinir-senha.js"></script>
+    </body>
+</html>

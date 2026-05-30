@@ -1,175 +1,305 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt-BR">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Painel Admin - Loja Leila</title>
+        <link rel="stylesheet" href="../css/style.css" />
+        <!-- Opcional: Reaproveite seu CSS -->
+        <style>
+            /* Estilos básicos para o funcionamento das Abas e Layout limpo */
+            .admin-container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 20px;
+            }
+            .tabs {
+                display: flex;
+                gap: 10px;
+                margin-bottom: 20px;
+                border-bottom: 2px solid #ccc;
+                padding-bottom: 10px;
+            }
+            .tab-btn {
+                padding: 10px 20px;
+                cursor: pointer;
+                border: none;
+                background: #eee;
+                font-weight: bold;
+                border-radius: 5px;
+            }
+            .tab-btn.active {
+                background: #4caf50;
+                color: white;
+            }
+            .tab-content {
+                display: none;
+            }
+            .tab-content.active {
+                display: block;
+            }
 
-        <link rel="stylesheet" href="../css/shop.css" />
+            /* Estilos do Formulário de Produto */
+            .form-produto {
+                background: #f9f9f9;
+                padding: 20px;
+                border-radius: 8px;
+                margin-bottom: 30px;
+            }
+            .form-row {
+                display: flex;
+                gap: 15px;
+                margin-bottom: 15px;
+            }
+            .form-group {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+            }
+            .form-group label {
+                margin-bottom: 5px;
+                font-weight: bold;
+            }
+            .form-group input,
+            .form-group textarea {
+                padding: 8px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+            }
+            .btn-submit {
+                background: #007bff;
+                color: white;
+                padding: 10px 20px;
+                border: none;
+                cursor: pointer;
+                border-radius: 5px;
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 15px;
+            }
+            th,
+            td {
+                padding: 12px;
+                border: 1px solid #ddd;
+                text-align: left;
+            }
+            th {
+                background: #f4f4f4;
+            }
+            .btn-acao {
+                padding: 5px 10px;
+                cursor: pointer;
+                border: none;
+                border-radius: 3px;
+            }
+            .btn-editar {
+                background: #ffc107;
+            }
+            .btn-deletar {
+                background: #dc3545;
+                color: white;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="admin-container">
+            <header
+                style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                "
+            >
+                <h2>Painel de Controle - Loja Leila</h2>
+                <button id="logout-btn" class="btn-deletar">Sair</button>
+            </header>
+
+            <!-- Navegação das Abas -->
+            <nav class="tabs">
+                <button
+                    class="tab-btn active"
+                    onclick="abrirAba(event, 'aba-pedidos')"
+                >
+                    📦 Gestão de Pedidos
+                </button>
+                <button
+                    class="tab-btn"
+                    onclick="abrirAba(event, 'aba-estoque')"
+                >
+                    👗 Estoque e Roupas
+                </button>
+                <button
+                    class="tab-btn"
+                    onclick="abrirAba(event, 'aba-clientes')"
+                >
+                    👥 Lista de Clientes
+                </button>
+            </nav>
+
+            <!-- ========================================== -->
+            <!-- ABA 1: PEDIDOS -->
+            <!-- ========================================== -->
+            <section id="aba-pedidos" class="tab-content active">
+                <h3>Pedidos Recentes</h3>
+                <p>Acompanhe as vendas e confirme os pagamentos via Pix.</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID Pedido</th>
+                            <th>Cliente</th>
+                            <th>Data</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lista-admin-pedidos">
+                        <!-- Preenchido via JS (a lógica que você já tem iniciada) -->
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- ========================================== -->
+            <!-- ABA 2: ESTOQUE (PRODUTOS) -->
+            <!-- ========================================== -->
+            <section id="aba-estoque" class="tab-content">
+                <div class="form-produto">
+                    <h3>Adicionar Nova Roupa</h3>
+                    <form id="form-add-produto" enctype="multipart/form-data">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="nomeProduto">Nome da Peça</label>
+                                <input
+                                    type="text"
+                                    id="nomeProduto"
+                                    name="nome"
+                                    placeholder="Ex: Vestido Floral"
+                                    required
+                                />
+                            </div>
+                            <div class="form-group">
+                                <label for="precoProduto">Preço (R$)</label>
+                                <input
+                                    type="number"
+                                    step="0.01"
+                                    id="precoProduto"
+                                    name="preco"
+                                    placeholder="Ex: 89.90"
+                                    required
+                                />
+                            </div>
+                            <div class="form-group">
+                                <label for="tamanhoProduto">Tamanho</label>
+                                <input
+                                    type="text"
+                                    id="tamanhoProduto"
+                                    name="tamanho"
+                                    placeholder="Ex: M ou Único"
+                                    required
+                                />
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="descricaoProduto">Descrição</label>
+                                <textarea
+                                    id="descricaoProduto"
+                                    name="descricao"
+                                    rows="2"
+                                    placeholder="Detalhes do tecido, caimento..."
+                                    required
+                                ></textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="imagemProduto">Foto da Roupa</label>
+                                <!-- O atributo accept espelha o seu upload.middleware.js -->
+                                <input
+                                    type="file"
+                                    id="imagemProduto"
+                                    name="imagem"
+                                    accept=".jpeg, .jpg, .png, .webp"
+                                    required
+                                />
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-submit">
+                            + Salvar Produto no Estoque
+                        </button>
+                        <div
+                            id="produto-mensagem"
+                            style="margin-top: 10px"
+                        ></div>
+                    </form>
+                </div>
+
+                <h3>Roupas Cadastradas</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Foto</th>
+                            <th>Nome</th>
+                            <th>Tamanho</th>
+                            <th>Preço</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lista-admin-produtos">
+                        <!-- Produtos preenchidos via JS -->
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- ========================================== -->
+            <!-- ABA 3: CLIENTES -->
+            <!-- ========================================== -->
+            <section id="aba-clientes" class="tab-content">
+                <h3>Clientes Cadastrados</h3>
+                <p>
+                    Lista de pessoas que criaram conta na loja (Apenas leitura).
+                </p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome do Cliente</th>
+                            <th>E-mail</th>
+                            <th>Data de Cadastro</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lista-admin-clientes">
+                        <!-- Clientes preenchidos via JS -->
+                    </tbody>
+                </table>
+            </section>
+        </div>
+
+        <!-- Script para alternar as abas -->
         <script>
-            const token = localStorage.getItem("Token");
-            if (!token) {
-                window.location.href = "login.html";
-            } else {
-                try {
-                    // Lê rapidamente o token
-                    const payload = JSON.parse(atob(token.split(".")[1]));
-                    // Se o isAdmin não for true, bloqueia o acesso
-                    if (payload.isAdmin !== true) {
-                        alert(
-                            "Acesso Negado: Esta página é exclusiva para a Dona Leila (Administradores).",
-                        );
-                        window.location.href = "shop.html"; // Chuta para a vitrine
-                    }
-                } catch (e) {
-                    window.location.href = "login.html";
-                }
+            function abrirAba(evento, idAba) {
+                // Esconde todas as abas
+                const abas = document.querySelectorAll(".tab-content");
+                abas.forEach((aba) => aba.classList.remove("active"));
+
+                // Remove a classe 'active' de todos os botões
+                const botoes = document.querySelectorAll(".tab-btn");
+                botoes.forEach((botao) => botao.classList.remove("active"));
+
+                // Mostra a aba atual e marca o botão como ativo
+                document.getElementById(idAba).classList.add("active");
+                evento.currentTarget.classList.add("active");
             }
         </script>
 
-        <script src="../scripts/init.js" defer></script>
-    </head>
-    <body>
-        <section id="header">
-            <div>
-                <ul id="navbar">
-                    <li><a href="../index.html">Início</a></li>
-                    <li><a href="shop.html">Loja Leila</a></li>
-                    <li><a href="about.html">Sobre</a></li>
-                    <li><a href="contact.html">Contato</a></li>
-                    <li>
-                        <a href="cart.html"
-                            ><i class="ri-shopping-bag-line"></i
-                        ></a>
-                    </li>
-                </ul>
-            </div>
-        </section>
-
-        <section id="admin-panel" class="section-p1">
-            <h2>Cadastrar Nova Roupa</h2>
-            <p>Preencha os dados e envie a foto do novo produto.</p>
-
-            <form id="formAdmin" style="max-width: 400px; margin-top: 20px">
-                <div style="margin-bottom: 15px">
-                    <label>Nome da Peça:</label><br />
-                    <input
-                        type="text"
-                        id="nome"
-                        placeholder="Ex: Vestido Florido"
-                        required
-                        style="width: 100%; padding: 8px"
-                    />
-                </div>
-
-                <div style="margin-bottom: 15px">
-                    <label>Preço (R$):</label><br />
-                    <input
-                        type="number"
-                        step="0.01"
-                        id="preco"
-                        placeholder="99.90"
-                        required
-                        style="width: 100%; padding: 8px"
-                    />
-                </div>
-
-                <div style="margin-bottom: 15px">
-                    <label>Tamanho:</label><br />
-                    <select
-                        id="tamanho"
-                        required
-                        style="width: 100%; padding: 8px"
-                    >
-                        <option value="P">Pequeno (P)</option>
-                        <option value="M">Médio (M)</option>
-                        <option value="G">Grande (G)</option>
-                    </select>
-                </div>
-
-                <div style="margin-bottom: 15px">
-                    <label>Foto do Produto:</label><br />
-                    <input
-                        type="file"
-                        id="imagem"
-                        accept="image/*"
-                        required
-                        style="width: 100%; padding: 8px"
-                    />
-                </div>
-
-                <button
-                    type="submit"
-                    style="
-                        padding: 10px 20px;
-                        background-color: #088178;
-                        color: white;
-                        border: none;
-                        cursor: pointer;
-                    "
-                >
-                    Salvar Produto
-                </button>
-            </form>
-        </section>
-
-        <script>
-            document
-                .getElementById("formAdmin")
-                .addEventListener("submit", async (e) => {
-                    e.preventDefault();
-
-                    const token = localStorage.getItem("Token");
-
-                    // FormData empacota o texto e o arquivo juntos
-                    const formData = new FormData();
-                    formData.append(
-                        "name",
-                        document.getElementById("nome").value,
-                    );
-                    formData.append(
-                        "price",
-                        document.getElementById("preco").value,
-                    );
-                    formData.append(
-                        "size",
-                        document.getElementById("tamanho").value,
-                    );
-                    formData.append(
-                        "image",
-                        document.getElementById("imagem").files[0],
-                    );
-
-                    try {
-                        // Lembra da porta 3001!
-                        const response = await fetch(
-                            "http://localhost:3001/api/produtos",
-                            {
-                                method: "POST",
-                                headers: {
-                                    // Enviamos o JWT para o guarda-costas do Back-end
-                                    Authorization: `Bearer ${token}`,
-                                    // IMPORTANTE: Ao usar FormData com Fetch, NÃO defina o "Content-Type".
-                                    // O navegador fará isso automaticamente e colocará a tag 'boundary' da imagem.
-                                },
-                                body: formData,
-                            },
-                        );
-
-                        const data = await response.json();
-                        if (response.ok) {
-                            alert(
-                                "Produto cadastrado com sucesso! Vá até a loja para conferir.",
-                            );
-                            document.getElementById("formAdmin").reset(); // Limpa o formulário
-                        } else {
-                            alert("Erro: " + data.message);
-                        }
-                    } catch (error) {
-                        console.error("Erro no upload:", error);
-                        alert("Erro de comunicação com o servidor.");
-                    }
-                });
-        </script>
+        <!-- Script principal do admin (A ser criado para lidar com os CRUDs) -->
+        <!-- <script src="../scripts/admin.js"></script> -->
     </body>
 </html>
