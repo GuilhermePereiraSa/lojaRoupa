@@ -63,7 +63,15 @@ export const updateClothing = async (req, res) => {
     if (!clothing)
       return res.status(404).json({ error: "Produto não encontrado." });
 
-    await clothing.update({ name, price, size, image });
+    const caminhoImagem = req.file ? req.file.path : produto.imagem;
+
+    await produto.update({
+      nome: req.body.nome,
+      preco: req.body.preco,
+      tamanho: req.body.tamanho,
+      descricao: req.body.descricao,
+      imagem: caminhoImagem, // Usa a nova ou preserva a velha
+    });
     res
       .status(200)
       .json({ message: "Produto atualizado com sucesso!", clothing });

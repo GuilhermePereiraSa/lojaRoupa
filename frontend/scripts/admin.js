@@ -1,5 +1,66 @@
+// Agora a variável existe globalmente
+let produtoEmEdicaoId = null;
+let msgProduto = null;
+let btnSubmitProduto = null;
+
 document.addEventListener("DOMContentLoaded", () => {
+  // Atribuímos os elementos às variáveis globais recém-criadas
+  msgProduto = document.getElementById("produto-mensagem");
+  btnSubmitProduto = document.querySelector("#form-add-produto .btn-submit");
+
   loadAdminOrders();
+
+  // Lógica do Formulário de Adicionar Produto (Estoque)
+  const formAddProduto = document.getElementById("form-add-produto");
+
+  formAddProduto.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    msgProduto.innerText = produtoEmEdicaoId
+      ? "Atualizando produto..."
+      : "Salvando produto...";
+    msgProduto.style.color = "blue";
+
+    const formData = new FormData(formAddProduto);
+    const token =
+      localStorage.getItem("token") || localStorage.getItem("Token");
+
+    // Define a URL e o Método dependendo se é Cadastro (POST) ou Edição (PUT)
+    const url = produtoEmEdicaoId
+      ? `/api/produtos/${produtoEmEdicaoId}`
+      : "/api/produtos";
+    const method = produtoEmEdicaoId ? "PUT" : "POST";
+
+    try {
+      const response = await fetch(url, {
+        method: method,
+        headers: { Authorization: `Bearer ${token}` }, // Sem Content-Type, o navegador resolve o boundary
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        msgProduto.style.color = "green";
+        msgProduto.innerText = produtoEmEdicaoId
+          ? "Roupa atualizada com sucesso!"
+          : "Roupa adicionada ao estoque!";
+
+        // Reseta o formulário e volta para o modo "Cadastro"
+        formAddProduto.reset();
+        produtoEmEdicaoId = null;
+        btnSubmitProduto.innerText = "+ Salvar Produto no Estoque";
+
+        carregarProdutos(token); // Atualiza a tabela
+      } else {
+        msgProduto.style.color = "red";
+        msgProduto.innerText = data.error || "Erro ao salvar o produto.";
+      }
+    } catch (error) {
+      console.error("Erro no upload/edição:", error);
+      msgProduto.style.color = "red";
+      msgProduto.innerText = "Falha de comunicação com o servidor.";
+    }
+  });
 });
 
 async function loadAdminOrders() {
@@ -11,98 +72,155 @@ async function loadAdminOrders() {
     return;
   }
 
+  // Inicializa as listagens
+  carregarProdutos(token);
+  carregarClientes(token);
+  // carregarPedidos(token); // Se você já tiver a função de pedidos, chame aqui
+}
+
+// FUNÇÕES DE LISTAGEM (READ)
+async function carregarProdutos(token) {
+  const tbody = document.getElementById("lista-admin-produtos");
+  tbody.innerHTML = '<tr><td colspan="6">Carregando estoque...</td></tr>';
+
   try {
-    const response = await fetch("http://localhost:3001/api/pedidos/admin", {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    // Usa a rota GET /api/produtos que já está pronta para a vitrine
+    const response = await fetch("/api/produtos");
+    const produtos = await response.json();
 
-    if (!response.ok) {
-      throw new Error("Erro ao carregar pedidos.");
-    }
+    tbody.innerHTML = "";
 
-    const orders = await response.json();
-    const tableBody = document.getElementById("admin-orders-table");
-    tableBody.innerHTML = "";
-
-    if (orders.length === 0) {
-      tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center;">Nenhum pedido realizado ainda.</td></tr>`;
+    if (produtos.length === 0) {
+      tbody.innerHTML =
+        '<tr><td colspan="6">Nenhuma roupa cadastrada no estoque.</td></tr>';
       return;
     }
 
-    orders.forEach((order) => {
+    produtos.forEach((produto) => {
+      const precoFormatado = Number(produto.preco).toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+      });
+      // Ajuste o caminho da imagem de acordo com o que o Multer salva no banco
+      const caminhoImagem = produto.imagem
+        ? `/${produto.imagem}`
+        : "../img/placeholder.png";
+
       const tr = document.createElement("tr");
-
-      // Formata a lista de itens para ficar bonita na tabela
-      const itensFormatados = order.items
-        .map((item) => `${item.name} (1x)`)
-        .join(", ");
-
-      // Formata a data de criação do banco
-      const dataPedido = new Date(order.createdAt).toLocaleString("pt-BR");
-
-      // Define a cor da tag de status
-      const statusClass =
-        order.status === "Pago" ? "status-pago" : "status-pendente";
-
-      // Define o que aparece na coluna de Ação
-      let acaoHTML = `<span>Concluído ✔️</span>`;
-      if (order.status === "Pendente") {
-        acaoHTML = `<button class="btn-confirmar" onclick="confirmPayment(${order.id})">Confirmar Recebimento</button>`;
-      }
-
       tr.innerHTML = `
-                <td><strong>#${order.id}</strong></td>
-                <td>${dataPedido}</td>
-                <td>${itensFormatados}</td>
-                <td><strong>R$ ${parseFloat(order.totalPrice).toFixed(2)}</strong></td>
-                <td><span class="${statusClass}">${order.status}</span></td>
-                <td>${acaoHTML}</td>
+                <td>#${produto.id}</td>
+                <td><img src="${caminhoImagem}" alt="${produto.nome}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;"></td>
+                <td>${produto.nome}</td>
+                <td>${produto.tamanho}</td>
+                <td>${precoFormatado}</td>
+                <td>
+                    <button class="btn-acao btn-editar" onclick="editarProduto(${produto.id})">Editar</button>
+                    <button class="btn-acao btn-deletar" onclick="deletarProduto(${produto.id}, '${token}')">Excluir</button>
+                </td>
             `;
-
-      tableBody.appendChild(tr);
+      tbody.appendChild(tr);
     });
   } catch (error) {
-    console.error("Erro no painel admin:", error);
-    alert("Erro ao carregar a lista de pedidos.");
+    console.error("Erro ao carregar produtos:", error);
+    tbody.innerHTML =
+      '<tr><td colspan="6" style="color: red;">Erro ao carregar o estoque.</td></tr>';
   }
 }
 
-// Função global chamada pelo clique do botão na linha da tabela
-async function confirmPayment(orderId) {
-  const token = localStorage.getItem("Token") || localStorage.getItem("token");
+async function carregarClientes(token) {
+  const tbody = document.getElementById("lista-admin-clientes");
+  tbody.innerHTML = '<tr><td colspan="4">Carregando clientes...</td></tr>';
 
+  try {
+    const response = await fetch("/api/usuarios", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (!response.ok) throw new Error("Sem permissão ou erro no server");
+
+    const clientes = await response.json();
+    tbody.innerHTML = "";
+
+    clientes.forEach((cliente) => {
+      const dataCadastro = new Date(cliente.createdAt).toLocaleDateString(
+        "pt-BR",
+      );
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+                <td>#${cliente.id}</td>
+                <td>${cliente.name || cliente.nome || cliente.username}</td>
+                <td>${cliente.email || "Nenhum e-mail registrado"}</td>
+                <td>${dataCadastro}</td>
+            `;
+      tbody.appendChild(tr);
+    });
+  } catch (error) {
+    console.error("Erro ao carregar clientes:", error);
+    tbody.innerHTML =
+      '<tr><td colspan="4" style="color: red;">Erro ao buscar lista de clientes.</td></tr>';
+  }
+}
+
+// FUNÇÕES DE AÇÃO (UPDATE & DELETE)
+
+async function deletarProduto(id, token) {
   if (
     !confirm(
-      `Deseja confirmar o recebimento do pagamento para o pedido #${orderId}?`,
+      "Tem certeza que deseja deletar esta roupa do estoque? Essa ação não pode ser desfeita.",
     )
   ) {
-    return;
+    return; // Cancela se o usuário clicar em "Não"
   }
 
   try {
-    const response = await fetch(
-      `http://localhost:3001/api/pedidos/${orderId}/confirmar`,
-      {
-        method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      },
-    );
-
-    const data = await response.json();
+    const response = await fetch(`/api/produtos/${id}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
+    });
 
     if (response.ok) {
-      alert("Sucesso! O pedido agora consta como PAGO.");
-      loadAdminOrders(); // Atualiza a tabela dinamicamente sem recarregar a página
+      alert("Roupa removida do estoque com sucesso.");
+      carregarProdutos(token); // Recarrega a tabela para sumir com o item
     } else {
-      alert("Erro ao confirmar pagamento: " + data.error);
+      const data = await response.json();
+      alert(`Erro ao excluir: ${data.error || "Tente novamente."}`);
     }
   } catch (error) {
-    console.error("Erro ao atualizar status:", error);
-    alert("Erro de comunicação com o servidor.");
+    console.error("Erro ao deletar:", error);
+    alert("Falha de conexão ao tentar deletar o produto.");
+  }
+}
+
+async function editarProduto(id) {
+  // Rola a página para cima suavemente para a Dona Leila ver o formulário
+  window.scrollTo({ top: 0, behavior: "smooth" });
+
+  try {
+    // Busca os dados atuais daquele produto específico no back-end
+    const response = await fetch(`/api/produtos/${id}`);
+
+    if (!response.ok) throw new Error("Erro ao buscar dados do produto");
+
+    const produto = await response.json();
+
+    // Preenche os inputs com os dados do banco
+    document.getElementById("nomeProduto").value = produto.nome;
+    document.getElementById("precoProduto").value = produto.preco;
+    document.getElementById("tamanhoProduto").value = produto.tamanho;
+    document.getElementById("descricaoProduto").value = produto.descricao;
+
+    // A imagem não pode ser preenchida automaticamente
+    document.getElementById("imagemProduto").removeAttribute("required");
+
+    // Altera o estado da variável global e o texto do botão
+    produtoEmEdicaoId = id;
+    if (btnSubmitProduto) btnSubmitProduto.innerText = "🔄 Atualizar Produto";
+    if (msgProduto) {
+      msgProduto.innerText = "Editando produto ID: " + id;
+      msgProduto.style.color = "#ffc107";
+    }
+  } catch (error) {
+    console.error("Erro ao entrar em modo de edição:", error);
+    alert("Não foi possível carregar os dados desta roupa para edição.");
   }
 }

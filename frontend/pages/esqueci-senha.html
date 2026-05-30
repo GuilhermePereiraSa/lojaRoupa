@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Esqueci minha senha - Loja Leila</title>
+        <!-- Adicione o link para o seu arquivo de CSS aqui -->
+    </head>
+    <body>
+        <div class="container">
+            <h2>Recuperar Senha</h2>
+            <p>
+                Digite seu e-mail abaixo e enviaremos um link para você
+                redefinir sua senha.
+            </p>
+
+            <form id="form-forgot-password">
+                <div>
+                    <label for="email">E-mail cadastrado:</label>
+                    <input
+                        type="email"
+                        id="email"
+                        required
+                        placeholder="exemplo@email.com"
+                    />
+                </div>
+                <button type="submit">Enviar link de recuperação</button>
+            </form>
+
+            <div
+                id="forgot-message"
+                style="margin-top: 15px; font-weight: bold"
+            ></div>
+
+            <p><a href="login.html">Voltar para o Login</a></p>
+        </div>
+
+        <script src="esqueci-senha.js"></script>
+    </body>
+</html>

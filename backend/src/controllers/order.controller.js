@@ -83,44 +83,6 @@ export const createOrder = async (req, res) => {
   }
 };
 
-export const getAdminOrders = async (req, res) => {
-  try {
-    const orders = await Order.findAll({
-      order: [["createdAt", "DESC"]],
-    });
-
-    res.status(200).json(orders);
-  } catch (error) {
-    console.error("Erro ao buscar pedidos para o admin: ", error);
-    res.status(500).json({ error: "Erro ao carregar o painel de pedidos." });
-  }
-};
-
-export const confirmOrderPayment = async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    // search
-    const order = await Order.findByPk(id);
-
-    if (!order) {
-      return res.status(404).json({ error: "Pedido não encontrado" });
-    }
-
-    order.status = "Pago";
-    await order.save();
-
-    res
-      .status(200)
-      .json({ message: "Pagamento confirmado com sucesso! ", order });
-  } catch (error) {
-    console.error("Erro ao confirmar pagamento ", error);
-    return res
-      .status(500)
-      .json({ error: "Erro ao confirmar pagamento no servidor." });
-  }
-};
-
 // [READ OTHERS] - Listar os pedidos do usuário logado (Histórico do Cliente)
 export const getUserOrders = async (req, res) => {
   try {
@@ -153,7 +115,7 @@ export const deleteOrder = async (req, res) => {
 
 export const getAdminOrders = async (req, res) => {
   try {
-    const orders = await findAll({
+    const orders = await Order.findAll({
       order: [["createdAt", "DESC"]],
     });
     res.status(200).json(orders);
