@@ -1,9 +1,19 @@
 import express from "express";
-import { createOrder } from "../controllers/order.controller.js";
+import {
+  createOrder,
+  getUserOrders,
+  conf,
+  deleteOrder,
+} from "../controllers/order.controller.js";
 import { verifyToken } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
 router.post("/", verifyToken, createOrder);
+router.get("/meus", verifyToken, getUserOrders);
+
+router.get("/admin", verifyToken, getAdminOrders);
+router.patch("/:id/confirmar", verifyToken, confirmOrderPayment);
+router.delete("/:id", verifyToken, deleteOrder); // deletar pedido
 
 export default router;
