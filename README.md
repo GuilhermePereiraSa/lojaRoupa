@@ -5,8 +5,3 @@ Um template de uma lojinha online onde implementamos para pessoas leigas na comp
 ## Por que foi criado?
 
 Para realização do projeto 1 da disciplina de Introdução a WEB (SCC0219) lecionada pela professora Bruna Carolina Rodrigues da Cunha.
-
-## Veja o slide próprio para a parte 1, onde respondemos as questões: Quem é nosso cliente? Por que ele precisa disso? 
-![Veja aqui mais sobre]()
-
-![Diagram on how this gone work](images/apiAprovarRoupa.png)
