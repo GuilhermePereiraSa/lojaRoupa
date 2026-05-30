@@ -72,7 +72,7 @@ export const confirmOrderPayment = async (req, res) => {
     const order = await Order.findByPk(id);
 
     if (!order) {
-      return res.status(404).json({ error: "Pedido não encontrado. " });
+      return res.status(404).json({ error: "Pedido não encontrado." });
     }
 
     order.status = "Pago";

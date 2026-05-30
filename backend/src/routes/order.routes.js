@@ -2,8 +2,9 @@ import express from "express";
 import {
   createOrder,
   getUserOrders,
-  conf,
+  confirmOrderPayment,
   deleteOrder,
+  getAdminOrders,
 } from "../controllers/order.controller.js";
 import { verifyToken } from "../middlewares/auth.middleware.js";
 

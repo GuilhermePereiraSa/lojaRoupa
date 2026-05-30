@@ -94,3 +94,61 @@ export const logout = async (req, res, next) => {
       .json({ message: "Logout bem sucedido." })
   );
 };
+
+export const getAllUsers = async (req, res) => {
+  try {
+    const usuarios = await User.findAll({
+      attributes: ["id", "name", "email"],
+    });
+    res.status(200).json(usuarios);
+  } catch (error) {
+    res.status(500).json({ message: "Erro do servidor interno." });
+  }
+};
+
+export const getUserProfile = async (req, res) => {
+  try {
+    const usuario = await User.findByPk(req.userId, {
+      attributes: ["id", "name", "email"],
+    });
+    if (!usuario)
+      return res.status(404).json({ error: "Erro ao carregar perfil." });
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao carregar dados do perfil." });
+  }
+};
+
+export const updateProfile = async (req, res) => {
+  try {
+    const { name, email } = req.body;
+    const usuario = await User.findByPk(req.userId);
+
+    if (!usuario)
+      return res.status(404).json({ error: "Erro ao carregar perfil." });
+
+    await usuario.update({ name, email });
+    res.status(200).json({
+      message: "Perfil atualizado com sucesso!",
+      user: { name, email },
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao carregar dados do perfil." });
+  }
+};
+
+export const deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const usuario = await User.findByPk(id);
+
+    if (!usuario)
+      return res.status(404).json({ error: "Usuário não encontrado." });
+
+    await usuario.destroy();
+    res
+      .status(200)
+      .json({ message: "Conta de usuário removida do sistema com sucesso." });
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao deletar usuário do sistema." });
+  }
+};
