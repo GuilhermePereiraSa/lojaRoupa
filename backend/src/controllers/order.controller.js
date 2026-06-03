@@ -1,5 +1,5 @@
 import QRCode from "qrcode";
-import { generatePixPayload } from "../utils/pix.util.js";
+import { generatePixPayload } from "../utils/pix.utils.js";
 import Order from "../models/order.model.js";
 import Clothing from "../models/clothing.model.js";
 

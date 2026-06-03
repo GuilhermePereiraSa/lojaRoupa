@@ -12,7 +12,7 @@ export const getAllClothings = async (req, res) => {
 };
 
 // GET by ID
-export const getProductById = async (req, res) => {
+export const getClothingById = async (req, res) => {
   try {
     const { id } = req.params;
     const clothing = await Clothing.findByPk(id);
@@ -80,7 +80,7 @@ export const updateClothing = async (req, res) => {
   }
 };
 
-export const deleteProduct = async (req, res) => {
+export const deleteClothing = async (req, res) => {
   try {
     const { id } = req.params;
     const clothing = await Clothing.findByPk(id);

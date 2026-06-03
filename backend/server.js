@@ -23,6 +23,6 @@ app.use("/api/pedidos", orderRouter);
 
 app.use("/public", express.static("public"));
 
-sequelize.sync().then(() => {
+sequelize.sync({}).then(() => {
   app.listen(3001, () => console.log("Server rodando na 3001"));
 });

@@ -31,6 +31,12 @@ Clothing.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
+
+    stock: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0, // Inicia com zero
+    },
   },
   {
     sequelize,
