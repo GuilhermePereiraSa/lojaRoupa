@@ -2,6 +2,7 @@ import QRCode from "qrcode";
 import { generatePixPayload } from "../utils/pix.utils.js";
 import Order from "../models/order.model.js";
 import Clothing from "../models/clothing.model.js";
+import sequelize from "../models/dbconfig.js";
 
 export const createOrder = async (req, res) => {
   try {
@@ -126,22 +127,64 @@ export const getAdminOrders = async (req, res) => {
 };
 
 export const confirmOrderPayment = async (req, res) => {
+  const transactionBD = await sequelize.transaction();
+
   try {
     const { id } = req.params;
-    const order = await Order.findByPk(id);
+    const order = await Order.findByPk(id, {
+      transaction: transactionBD,
+      lock: transactionBD.LOCK.UPDATE,
+    });
 
     if (!order) {
+      await transactionBD.rollback(); //
       return res.status(404).json({ error: "Pedido não encontrado." });
     }
 
+    // inves de so dar como Pago, bate aqui e da rollback
+    if (order.status == "Pago") {
+      await transactionBD.rollback();
+      return res
+        .status(200)
+        .json({ message: "Pagamento já havia sido processado anteriormente." });
+    }
+
+    // race condition
+    for (const item of order.items) {
+      const [affectedRows] = await Clothing.update(
+        { stock: sequelize.literal("stock-1") },
+        {
+          where: {
+            id: item.id,
+            stock: { [Op.gte]: 1 }, // trava de segurança do banco
+          },
+          transaction: transactionBD,
+        },
+      );
+
+      if (affectedRows == 0) {
+        await transactionBD.rollback();
+        order.status = "Sem Estoque";
+        await order.save();
+
+        // AUTOMATICO??? NAO TEM COMO???
+        return res.status(409).json({
+          error: `O produto '${item.name}' esgotou antes da confirmação. Estorno necessário.`,
+        });
+      }
+    }
+
     order.status = "Pago";
-    await order.save();
+    await order.save({ transaction: transactionBD });
+
+    await transactionBD.commit();
 
     res.status(200).json({
       message: "Pagamento confirmado com sucesso!",
       order,
     });
   } catch (error) {
+    await transactionBD.rollback();
     console.error("Erro ao confirmar pagamento:", error);
     res
       .status(500)
