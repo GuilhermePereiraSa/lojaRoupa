@@ -51,7 +51,7 @@ class AuthConfig {
     } else {
       const LogIn = document.createElement("li");
       // Caminho absoluto com barra
-      LogIn.innerHTML = `<a href="/frontend/pages/login.html">Entrar</a>`;
+      LogIn.innerHTML = `<a href="/pages/login.html">Entrar</a>`;
       navBar.appendChild(LogIn);
     }
   }
@@ -59,7 +59,7 @@ class AuthConfig {
   logOut() {
     localStorage.removeItem("Token");
     // Caminho absoluto para o redirecionamento funcionar em qualquer tela
-    window.location.href = "/frontend/pages/login.html";
+    window.location.href = "/pages/login.html";
   }
 }
 
