@@ -5,11 +5,32 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Login</title>
-        <link rel="stylesheet" href="/css/style.min.css" />
+        <link rel="stylesheet" href="../css/login.css" />
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css"
+        />
         <script defer src="../scripts/login.js"></script>
         <script src="../scripts/init.js" defer></script>
     </head>
     <body class="login">
+
+        <section id="header">
+            <div>
+                <ul id="navbar">
+                    <li><a href="../index.html">Início</a></li>
+                    <li><a href="shop.html">Loja Leila</a></li>
+                    <li><a href="about.html">Sobre</a></li>
+                    <li><a href="contact.html">Contato</a></li>
+                    <li>
+                        <a href="cart.html"
+                            ><i class="ri-shopping-bag-line"></i
+                        ></a>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
         <div class="container">
             <h2 class="text-center">Login</h2>
             <br />
@@ -40,5 +61,16 @@
                 >
             </div>
         </div>
+
+        <div id="footer-container"></div>
+
+        <script>
+            fetch("footer.html")
+                .then((response) => response.text())
+                .then((data) => {
+                    document.getElementById("footer-container").innerHTML =
+                        data;
+                });
+        </script>
     </body>
 </html>

@@ -10,6 +10,10 @@ html {
     scroll-behavior: smooth;
 }
 
+body {
+    min-height: 100dvh;
+}
+
 /* Global Styles */
 
 h1 {
@@ -155,4 +159,10 @@ p {
         font-weight: 700;
         color: #088178;
     }
+}
+
+/* Sticky footer*/
+
+#footer-container {
+    margin-top: auto;
 }
