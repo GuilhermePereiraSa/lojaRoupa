@@ -1,0 +1,7 @@
+./backend/node_modules
+npm-debug.log
+./backend/.env
+.git
+/backend/.gitignore
+Dockerfile
+.dockerignore
