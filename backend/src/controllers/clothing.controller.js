@@ -35,7 +35,8 @@ export const createClothing = async (req, res) => {
         .json({ message: "A imagem do produto é obrigatória." });
     }
 
-    const imagePath = `/public/uploads/${req.file.filename}`;
+    // Cloudinary returns the URL in req.file.path
+    const imagePath = req.file.path;
 
     const newClothing = await Clothing.create({
       name,
@@ -57,25 +58,27 @@ export const createClothing = async (req, res) => {
 export const updateClothing = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, price, size, image } = req.body;
+    const { name, price, size } = req.body;
 
     const clothing = await Clothing.findByPk(id);
     if (!clothing)
       return res.status(404).json({ error: "Produto não encontrado." });
 
-    const caminhoImagem = req.file ? req.file.path : produto.imagem;
+    // Se houver nova imagem, usa o path do Cloudinary, senão mantém a antiga
+    const imagePath = req.file ? req.file.path : clothing.image;
 
-    await produto.update({
-      nome: req.body.nome,
-      preco: req.body.preco,
-      tamanho: req.body.tamanho,
-      descricao: req.body.descricao,
-      imagem: caminhoImagem, // Usa a nova ou preserva a velha
+    await clothing.update({
+      name: name || clothing.name,
+      price: price || clothing.price,
+      size: size || clothing.size,
+      image: imagePath,
     });
+    
     res
       .status(200)
       .json({ message: "Produto atualizado com sucesso!", clothing });
   } catch (error) {
+    console.error("Erro ao atualizar produto: ", error);
     res.status(500).json({ error: "Erro ao atualizar produto" });
   }
 };
@@ -84,10 +87,10 @@ export const deleteClothing = async (req, res) => {
   try {
     const { id } = req.params;
     const clothing = await Clothing.findByPk(id);
-    if (!produto)
+    if (!clothing)
       return res.status(404).json({ error: "Produto não encontrado." });
 
-    await produto.destroy();
+    await clothing.destroy();
     res.status(200).json({ message: "Produto removido com sucesso!" });
   } catch (error) {
     res.status(500).json({ error: "Erro ao remover o produto." });
