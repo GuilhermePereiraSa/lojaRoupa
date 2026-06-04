@@ -21,6 +21,12 @@ app.use("/api/auth", authRouter);
 app.use("/api/produtos", clothingRouter);
 app.use("/api/pedidos", orderRouter);
 
+app.get("/health", (req, res) => {
+  res
+    .status(200)
+    .json({ status: "OK", message: "Servidor funciona normalmente." });
+});
+
 sequelize.sync({}).then(() => {
   app.listen(3001, () => console.log("Server rodando na 3001"));
 });
