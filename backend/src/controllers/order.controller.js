@@ -57,7 +57,7 @@ export const createOrder = async (req, res) => {
     });
 
     // 5. Gerar o Pix com os dados reais do Pedido criado
-    const pixChave = "leila@lojavirtual.com.br"; // Chave da dona da loja
+    const pixChave = process.env.PIX_KEY;
 
     const pixCopiaECola = generatePixPayload(
       pixChave,
