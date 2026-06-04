@@ -68,12 +68,12 @@ export const updateClothing = async (req, res) => {
     const imagePath = req.file ? req.file.path : clothing.image;
 
     await clothing.update({
-      name: name || clothing.name,
-      price: price || clothing.price,
-      size: size || clothing.size,
+      name: name ?? clothing.name,
+      price: price ?? clothing.price,
+      size: size ?? clothing.size,
       image: imagePath,
     });
-    
+
     res
       .status(200)
       .json({ message: "Produto atualizado com sucesso!", clothing });
