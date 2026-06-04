@@ -8,7 +8,7 @@ import {
   updateClothing,
 } from "../controllers/clothing.controller.js";
 
-import { storage } from "../config/cloudinary.js";
+import { upload } from "../config/cloudinary.js";
 
 import { verifyToken, verifyAdmin } from "../middlewares/auth.middleware.js";
 
@@ -16,8 +16,6 @@ const router = express.Router();
 
 router.get("/", getAllClothings);
 router.get("/:id", getClothingById);
-
-const upload = multer({ storage: storage });
 
 // 1º Tem um token válido? -> 2º É um Admin? -> 3º Faz o Upload da foto -> 4º Grava na base de dados
 router.post(
@@ -28,7 +26,13 @@ router.post(
   createClothing,
 );
 
-router.put("/:id", verifyToken, updateClothing);
-router.delete("/:id", verifyToken, deleteClothing);
+router.put(
+  "/:id",
+  verifyToken,
+  verifyAdmin,
+  upload.single("image"),
+  updateClothing,
+);
+router.delete("/:id", verifyToken, verifyAdmin, deleteClothing);
 
 export default router;
