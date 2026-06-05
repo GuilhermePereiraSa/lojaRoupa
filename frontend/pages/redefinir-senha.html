@@ -3,10 +3,19 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="../css/login.css" />
         <title>Criar Nova Senha - Loja Leila</title>
         <!-- Adicione o link para o seu arquivo de CSS aqui -->
     </head>
     <body>
+        <section id="header" style="background-color: #065a52;">
+            <div>
+                <ul id="navbar">
+                    <li><a href="../index.html" style="color:aliceblue">Início</a></li>
+                </ul>
+            </div>
+        </section>
+
         <div class="container">
             <h2>Criar Nova Senha</h2>
             <p>
@@ -15,7 +24,7 @@
             </p>
 
             <form id="form-reset-password">
-                <div>
+                <div class="input-group">
                     <label for="novaSenha">Nova Senha:</label>
                     <!-- Usando minlength="8" acompanhando a sua regra de validação do login -->
                     <input
