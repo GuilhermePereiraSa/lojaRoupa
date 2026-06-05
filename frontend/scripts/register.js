@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
       try {
         // CORREÇÃO 2: Atualizado para a porta 3001
         const response = await fetch(
-          "http://localhost:3001/api/auth/register",
+          "http://api-lojaleila.onrender.com/api/auth/register",
           {
             method: "POST",
             headers: {

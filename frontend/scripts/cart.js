@@ -32,16 +32,19 @@ document.addEventListener("DOMContentLoaded", () => {
       try {
         console.log("Enviando pedido para o servidor...");
 
-        const response = await fetch("http://localhost:3001/api/pedidos", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`, // Passando o JWT para o middleware
+        const response = await fetch(
+          "http://api-lojaleila.onrender.com/api/pedidos",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`, // Passando o JWT para o middleware
+            },
+            body: JSON.stringify({
+              items: cart,
+            }),
           },
-          body: JSON.stringify({
-            items: cart,
-          }),
-        });
+        );
 
         const data = await response.json();
 

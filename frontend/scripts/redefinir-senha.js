@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       try {
         const response = await fetch(
-          "http://localhost:3001/api/auth/reset-password",
+          "http://api-lojaleila.onrender.com/api/auth/reset-password",
           {
             method: "POST",
             headers: {

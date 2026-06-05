@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       try {
         const response = await fetch(
-          "http://localhost:3001/api/auth/forgot-password",
+          "http://api-lojaleila.onrender.com/api/auth/forgot-password",
           {
             method: "POST",
             headers: {
