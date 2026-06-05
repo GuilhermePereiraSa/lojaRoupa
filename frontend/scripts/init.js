@@ -33,7 +33,7 @@ class AuthConfig {
       if (this.payload.isAdmin === true) {
         const AdminLi = document.createElement("li");
         // Caminho absoluto com barra
-        AdminLi.innerHTML = `<a href="/frontend/pages/admin.html">Painel Admin</a>`;
+        AdminLi.innerHTML = `<a href="/pages/admin.html">Painel Admin</a>`;
         navBar.appendChild(AdminLi);
       }
 
