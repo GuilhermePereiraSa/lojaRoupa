@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
 async function fetchProducts() {
   try {
     const response = await fetch(
-      "http://api-lojaleila.onrender.com/api/produtos",
+      "https://api-lojaleila.onrender.com/api/produtos",
     );
 
     if (!response.ok) throw new Error("Erro ao buscar produtos");
@@ -32,7 +32,7 @@ function renderProducts(products) {
     // Se a imagem for do upload do multer (começa com /public), usa o localhost:3001
     // Se for as inseridas manualmente no PostgreSQL (../img), mantém igual
     const imageUrl = product.image.startsWith("/public")
-      ? `http://api-lojaleila.onrender.com${product.image}`
+      ? `https://api-lojaleila.onrender.com${product.image}`
       : product.image;
 
     const productHTML = `

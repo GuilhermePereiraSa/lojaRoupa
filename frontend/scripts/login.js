@@ -28,7 +28,7 @@ class Login {
 
         try {
           const response = await fetch(
-            "http://api-lojaleila.onrender.com/api/auth/login",
+            "https://api-lojaleila.onrender.com/api/auth/login",
             {
               method: "POST",
               headers: {

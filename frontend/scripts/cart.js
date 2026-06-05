@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("Enviando pedido para o servidor...");
 
         const response = await fetch(
-          "http://api-lojaleila.onrender.com/api/pedidos",
+          "https://api-lojaleila.onrender.com/api/pedidos",
           {
             method: "POST",
             headers: {
