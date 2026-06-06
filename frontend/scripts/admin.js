@@ -99,27 +99,27 @@ async function carregarProdutos(token) {
     }
 
     produtos.forEach((produto) => {
-      const precoFormatado = Number(produto.preco).toLocaleString("pt-BR", {
+      const precoFormatado = Number(produto.price).toLocaleString("pt-BR", {
         style: "currency",
         currency: "BRL",
       });
       // Ajuste o caminho da imagem de acordo com o que o Multer salva no banco
-      const caminhoImagem = produto.imagem
-        ? `/${produto.imagem}`
+      const caminhoImagem = produto.image
+        ? produto.image
         : "../img/placeholder.png";
 
       const tr = document.createElement("tr");
       tr.innerHTML = `
-                <td>#${produto.id}</td>
-                <td><img src="${caminhoImagem}" alt="${produto.nome}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;"></td>
-                <td>${produto.nome}</td>
-                <td>${produto.tamanho}</td>
-                <td>${precoFormatado}</td>
-                <td>
-                    <button class="btn-acao btn-editar" onclick="editarProduto(${produto.id})">Editar</button>
-                    <button class="btn-acao btn-deletar" onclick="deletarProduto(${produto.id}, '${token}')">Excluir</button>
-                </td>
-            `;
+                      <td>#${produto.id}</td>
+                      <td><img src="${caminhoImagem}" alt="${produto.name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;"></td>
+                      <td>${produto.name}</td>
+                      <td>${produto.size}</td>
+                      <td>${precoFormatado}</td>
+                      <td>
+                          <button class="btn-acao btn-editar" onclick="editarProduto(${produto.id})">Editar</button>
+                          <button class="btn-acao btn-deletar" onclick="deletarProduto(${produto.id}, '${token}')">Excluir</button>
+                      </td>
+                  `;
       tbody.appendChild(tr);
     });
   } catch (error) {
