@@ -227,6 +227,7 @@ async function editarProduto(id) {
     document.getElementById("nomeProduto").value = produto.name;
     document.getElementById("precoProduto").value = produto.price;
     document.getElementById("tamanhoProduto").value = produto.size;
+    document.getElementById("estoqueProduto").value = produto.stock;
     //document.getElementById("descricaoProduto").value = produto.description;
 
     // A imagem não pode ser preenchida automaticamente

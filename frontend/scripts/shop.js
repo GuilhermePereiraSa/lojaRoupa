@@ -52,9 +52,10 @@ function renderProducts(products) {
                   </div>
                   <button
                       class="add-to-cart"
+                      data-id="${product.id}"
                       data-name="${product.name}"
                       data-price="${product.price}"
-                      data-img="${product.image}"
+                      data-img="${imageUrl}"
                   >
                       Adicionar ao Carrinho
                   </button>
@@ -70,12 +71,15 @@ function attachCartEvents() {
   const addToCartButtons = document.querySelectorAll(".add-to-cart");
   addToCartButtons.forEach((button) => {
     button.addEventListener("click", () => {
+      // Puxando o ID agora!
+      const id = button.getAttribute("data-id");
       const name = button.getAttribute("data-name");
       const price = parseFloat(button.getAttribute("data-price"));
       const img = button.getAttribute("data-img");
 
       let cart = JSON.parse(localStorage.getItem("cart")) || [];
-      cart.push({ name, price, img });
+      // Colocando o id no objeto salvo
+      cart.push({ id, name, price, img });
       localStorage.setItem("cart", JSON.stringify(cart));
 
       alert(`${name} adicionado ao carrinho!`);
