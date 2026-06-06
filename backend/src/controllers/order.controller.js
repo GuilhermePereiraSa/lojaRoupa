@@ -64,7 +64,7 @@ export const createOrder = async (req, res) => {
       pixChave,
       "Loja Leila",
       "Sao Carlos", // Cidade do lojista
-      `PED${novoPedido.id}`, // ID único real do Postgres gerado agora
+      "***", // Usar *** para máxima compatibilidade em Pix Estático
       totalAmount, // Valor total seguro e calculado no back-end
     );
 

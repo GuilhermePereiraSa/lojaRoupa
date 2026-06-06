@@ -40,9 +40,19 @@ export function generatePixPayload(
   txid,
   amount,
 ) {
+  // Limpa a chave de espaços ou aspas extras
+  let cleanKey = pixKey.trim().replace(/['"]/g, "");
+
+  // Se for celular (10 ou 11 dígitos) e não tiver o 55, adiciona automaticamente
+  // Pix de celular deve estar no formato 55 + DDD + Numero (com ou sem o + na frente)
+  // Muitos bancos preferem SEM o +, então vamos garantir o 55 no início.
+  if (/^\d{10,11}$/.test(cleanKey)) {
+    cleanKey = "55" + cleanKey;
+  }
+
   // 1. Informações da Conta do Recebedor (Field 26)
   const gui = formatField("00", "br.gov.bcb.pix");
-  const key = formatField("01", pixKey);
+  const key = formatField("01", cleanKey);
   const merchantAccountInfo = formatField("26", gui + key);
 
   // 2. Outros Campos Obrigatórios
