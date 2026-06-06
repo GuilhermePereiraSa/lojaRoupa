@@ -21,6 +21,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const cart = JSON.parse(localStorage.getItem("cart")) || [];
 
+      const itemsToSend = cart.map((item) => ({
+        ...item,
+        id: parseInt(item.id, 10), // Converte a string "1" para o número 1
+      }));
+
       if (cart.length === 0) {
         alert("Seu carrinho está vazio.");
         return;
@@ -41,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
               Authorization: `Bearer ${token}`, // Passando o JWT para o middleware
             },
             body: JSON.stringify({
-              items: cart,
+              items: itemsToSend,
             }),
           },
         );
