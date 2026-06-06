@@ -4,120 +4,31 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Painel Admin - Loja Leila</title>
+
         <link rel="stylesheet" href="../css/style.css" />
-        <!-- Opcional: Reaproveite seu CSS -->
-        <style>
-            /* Estilos básicos para o funcionamento das Abas e Layout limpo */
-            .admin-container {
-                max-width: 1200px;
-                margin: 0 auto;
-                padding: 20px;
-            }
-            .tabs {
-                display: flex;
-                gap: 10px;
-                margin-bottom: 20px;
-                border-bottom: 2px solid #ccc;
-                padding-bottom: 10px;
-            }
-            .tab-btn {
-                padding: 10px 20px;
-                cursor: pointer;
-                border: none;
-                background: #eee;
-                font-weight: bold;
-                border-radius: 5px;
-            }
-            .tab-btn.active {
-                background: #4caf50;
-                color: white;
-            }
-            .tab-content {
-                display: none;
-            }
-            .tab-content.active {
-                display: block;
-            }
+        <link rel="stylesheet" href="../css/admin.css" />
 
-            /* Estilos do Formulário de Produto */
-            .form-produto {
-                background: #f9f9f9;
-                padding: 20px;
-                border-radius: 8px;
-                margin-bottom: 30px;
-            }
-            .form-row {
-                display: flex;
-                gap: 15px;
-                margin-bottom: 15px;
-            }
-            .form-group {
-                flex: 1;
-                display: flex;
-                flex-direction: column;
-            }
-            .form-group label {
-                margin-bottom: 5px;
-                font-weight: bold;
-            }
-            .form-group input,
-            .form-group textarea {
-                padding: 8px;
-                border: 1px solid #ccc;
-                border-radius: 4px;
-            }
-            .btn-submit {
-                background: #007bff;
-                color: white;
-                padding: 10px 20px;
-                border: none;
-                cursor: pointer;
-                border-radius: 5px;
-            }
-
-            table {
-                width: 100%;
-                border-collapse: collapse;
-                margin-top: 15px;
-            }
-            th,
-            td {
-                padding: 12px;
-                border: 1px solid #ddd;
-                text-align: left;
-            }
-            th {
-                background: #f4f4f4;
-            }
-            .btn-acao {
-                padding: 5px 10px;
-                cursor: pointer;
-                border: none;
-                border-radius: 3px;
-            }
-            .btn-editar {
-                background: #ffc107;
-            }
-            .btn-deletar {
-                background: #dc3545;
-                color: white;
-            }
-        </style>
+        <script src="../scripts/init.js" defer></script>
     </head>
     <body>
         <div class="admin-container">
-            <header
-                style="
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                "
-            >
-                <h2>Painel de Controle - Loja Leila</h2>
-                <button id="logout-btn" class="btn-deletar">Sair</button>
+            <header class="admin-header">
+                <div class="logo-area">
+                    <h2>Painel de Controle</h2>
+                </div>
+
+                <ul id="navbar">
+                    <li><a href="../index.html">Início</a></li>
+                    <li><a href="shop.html">Loja Leila</a></li>
+                    <li><a href="about.html">Sobre</a></li>
+                    <li><a href="contact.html">Contato</a></li>
+                </ul>
+
+                <div class="action-area">
+                    <button id="logout-admin" class="btn-sair">Sair</button>
+                </div>
             </header>
 
-            <!-- Navegação das Abas -->
             <nav class="tabs">
                 <button
                     class="tab-btn active"
@@ -139,9 +50,6 @@
                 </button>
             </nav>
 
-            <!-- ========================================== -->
-            <!-- ABA 1: PEDIDOS -->
-            <!-- ========================================== -->
             <section id="aba-pedidos" class="tab-content active">
                 <h3>Pedidos Recentes</h3>
                 <p>Acompanhe as vendas e confirme os pagamentos via Pix.</p>
@@ -156,15 +64,10 @@
                             <th>Ações</th>
                         </tr>
                     </thead>
-                    <tbody id="lista-admin-pedidos">
-                        <!-- Preenchido via JS (a lógica que você já tem iniciada) -->
-                    </tbody>
+                    <tbody id="lista-admin-pedidos"></tbody>
                 </table>
             </section>
 
-            <!-- ========================================== -->
-            <!-- ABA 2: ESTOQUE (PRODUTOS) -->
-            <!-- ========================================== -->
             <section id="aba-estoque" class="tab-content">
                 <div class="form-produto">
                     <h3>Adicionar Nova Roupa</h3>
@@ -219,7 +122,6 @@
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="imagemProduto">Foto da Roupa</label>
-                                <!-- O atributo accept espelha o seu upload.middleware.js -->
                                 <input
                                     type="file"
                                     id="imagemProduto"
@@ -235,7 +137,7 @@
                         </button>
                         <div
                             id="produto-mensagem"
-                            style="margin-top: 10px"
+                            style="margin-top: 10px; font-weight: bold"
                         ></div>
                     </form>
                 </div>
@@ -252,15 +154,10 @@
                             <th>Ações</th>
                         </tr>
                     </thead>
-                    <tbody id="lista-admin-produtos">
-                        <!-- Produtos preenchidos via JS -->
-                    </tbody>
+                    <tbody id="lista-admin-produtos"></tbody>
                 </table>
             </section>
 
-            <!-- ========================================== -->
-            <!-- ABA 3: CLIENTES -->
-            <!-- ========================================== -->
             <section id="aba-clientes" class="tab-content">
                 <h3>Clientes Cadastrados</h3>
                 <p>
@@ -275,31 +172,24 @@
                             <th>Data de Cadastro</th>
                         </tr>
                     </thead>
-                    <tbody id="lista-admin-clientes">
-                        <!-- Clientes preenchidos via JS -->
-                    </tbody>
+                    <tbody id="lista-admin-clientes"></tbody>
                 </table>
             </section>
         </div>
 
-        <!-- Script para alternar as abas -->
         <script>
             function abrirAba(evento, idAba) {
-                // Esconde todas as abas
                 const abas = document.querySelectorAll(".tab-content");
                 abas.forEach((aba) => aba.classList.remove("active"));
 
-                // Remove a classe 'active' de todos os botões
                 const botoes = document.querySelectorAll(".tab-btn");
                 botoes.forEach((botao) => botao.classList.remove("active"));
 
-                // Mostra a aba atual e marca o botão como ativo
                 document.getElementById(idAba).classList.add("active");
                 evento.currentTarget.classList.add("active");
             }
         </script>
 
-        <!-- Script principal do admin (A ser criado para lidar com os CRUDs) -->
         <script src="../scripts/admin.js"></script>
     </body>
 </html>

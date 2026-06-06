@@ -4,6 +4,18 @@ let msgProduto = null;
 let btnSubmitProduto = null;
 
 document.addEventListener("DOMContentLoaded", () => {
+  const btnLogoutAdmin = document.getElementById("logout-admin");
+  if (btnLogoutAdmin) {
+    btnLogoutAdmin.addEventListener("click", (e) => {
+      e.preventDefault();
+      // Remove os tokens da memória do navegador
+      localStorage.removeItem("Token");
+      localStorage.removeItem("token");
+      // Redireciona de volta para a tela de login
+      window.location.href = "/pages/login.html";
+    });
+  }
+
   // Atribuímos os elementos às variáveis globais recém-criadas
   msgProduto = document.getElementById("produto-mensagem");
   btnSubmitProduto = document.querySelector("#form-add-produto .btn-submit");
