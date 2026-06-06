@@ -212,10 +212,10 @@ async function editarProduto(id) {
     const produto = await response.json();
 
     // Preenche os inputs com os dados do banco
-    document.getElementById("nomeProduto").value = produto.nome;
-    document.getElementById("precoProduto").value = produto.preco;
-    document.getElementById("tamanhoProduto").value = produto.tamanho;
-    document.getElementById("descricaoProduto").value = produto.descricao;
+    document.getElementById("nomeProduto").value = produto.name;
+    document.getElementById("precoProduto").value = produto.price;
+    document.getElementById("tamanhoProduto").value = produto.size;
+    //document.getElementById("descricaoProduto").value = produto.description;
 
     // A imagem não pode ser preenchida automaticamente
     document.getElementById("imagemProduto").removeAttribute("required");
