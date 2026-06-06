@@ -11,9 +11,8 @@ import "./src/models/user.model.js";
 import "./src/models/clothing.model.js";
 import "./src/models/order.model.js";
 
-app.set("trust proxy", 1);
-
 const app = express();
+app.set("trust proxy", 1);
 
 app.use(cors());
 app.use(express.json()); // Apresentacao - formatacao padrao
