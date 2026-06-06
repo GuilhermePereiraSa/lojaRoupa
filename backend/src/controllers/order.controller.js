@@ -3,6 +3,7 @@ import { generatePixPayload } from "../utils/pix.utils.js";
 import Order from "../models/order.model.js";
 import Clothing from "../models/clothing.model.js";
 import sequelize from "../models/dbconfig.js";
+import { Op } from "sequelize";
 
 export const createOrder = async (req, res) => {
   try {
