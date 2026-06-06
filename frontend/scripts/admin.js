@@ -26,8 +26,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Define a URL e o Método dependendo se é Cadastro (POST) ou Edição (PUT)
     const url = produtoEmEdicaoId
-      ? `/api/produtos/${produtoEmEdicaoId}`
-      : "/api/produtos";
+      ? `https://api-lojaleila.onrender.com/api/produtos/${produtoEmEdicaoId}`
+      : "https://api-lojaleila.onrender.com/api/produtos/criar";
     const method = produtoEmEdicaoId ? "PUT" : "POST";
 
     try {
@@ -85,7 +85,9 @@ async function carregarProdutos(token) {
 
   try {
     // Usa a rota GET /api/produtos que já está pronta para a vitrine
-    const response = await fetch("/api/produtos");
+    const response = await fetch(
+      "https://api-lojaleila.onrender.com/api/produtos",
+    );
     const produtos = await response.json();
 
     tbody.innerHTML = "";
@@ -132,9 +134,10 @@ async function carregarClientes(token) {
   tbody.innerHTML = '<tr><td colspan="4">Carregando clientes...</td></tr>';
 
   try {
-    const response = await fetch("/api/usuarios", {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const response = await fetch(
+      "https://api-lojaleila.onrender.com/api/auth/usuarios",
+      { headers: { Authorization: `Bearer ${token}` } },
+    );
 
     if (!response.ok) throw new Error("Sem permissão ou erro no server");
 
@@ -173,10 +176,13 @@ async function deletarProduto(id, token) {
   }
 
   try {
-    const response = await fetch(`/api/produtos/${id}`, {
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const response = await fetch(
+      `https://api-lojaleila.onrender.com/api/produtos/${id}`,
+      {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      },
+    );
 
     if (response.ok) {
       alert("Roupa removida do estoque com sucesso.");
@@ -197,7 +203,9 @@ async function editarProduto(id) {
 
   try {
     // Busca os dados atuais daquele produto específico no back-end
-    const response = await fetch(`/api/produtos/${id}`);
+    const response = await fetch(
+      `https://api-lojaleila.onrender.com/api/produtos/${id}`,
+    );
 
     if (!response.ok) throw new Error("Erro ao buscar dados do produto");
 

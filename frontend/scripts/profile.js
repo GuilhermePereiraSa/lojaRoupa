@@ -12,10 +12,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function carregarDadosPerfil(token) {
   try {
-    const response = await fetch("/api/usuarios/me", {
-      method: "GET",
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const response = await fetch(
+      "https://api-lojaleila.onrender.com/api/auth/perfil",
+      {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}` },
+      },
+    );
 
     if (response.ok) {
       const usuario = await response.json();
@@ -40,10 +43,13 @@ async function carregarHistoricoPedidos(token) {
   const msgPedidos = document.getElementById("pedidos-mensagem");
 
   try {
-    const response = await fetch("/api/pedidos/meus", {
-      method: "GET",
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const response = await fetch(
+      "https://api-lojaleila.onrender.com/api/pedidos/meus",
+      {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}` },
+      },
+    );
 
     if (!response.ok) {
       throw new Error("Erro ao buscar histórico.");
