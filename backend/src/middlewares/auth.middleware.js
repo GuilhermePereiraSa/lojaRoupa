@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import User from "../models/user.model.js";
 
 dotenv.config();
 
@@ -27,16 +28,29 @@ export const verifyToken = (req, res, next) => {
   }
 };
 
-export const verifyAdmin = (req, res, next) => {
-  if (!req.user)
-    return res.status(401).json({ message: "Utilizador não autenticado" });
+export const verifyAdmin = async (req, res, next) => {
+  try {
+    // 1. O verifyToken deixou a variável req.userId?
+    if (!req.userId) {
+      return res.status(401).json({ message: "Utilizador não autenticado" });
+    }
 
-  if (req.user.isAdmin !== true) {
-    return res.status(403).json({
-      message:
-        "Acesso irrestrito. Apenas administradores podem realizar essa ação",
-    });
+    // 2. Busca o usuário no banco de dados Neon
+    const usuario = await User.findByPk(req.userId);
+
+    // 3. Verifica se o usuário existe E se o isAdmin é verdadeiro
+    if (!usuario || usuario.isAdmin !== true) {
+      return res.status(403).json({
+        message:
+          "Acesso irrestrito. Apenas administradores podem realizar essa ação",
+      });
+    }
+
+    next();
+  } catch (error) {
+    console.error("Erro no middleware verifyAdmin: ", error);
+    return res
+      .status(500)
+      .json({ message: "Erro interno ao verificar permissões." });
   }
-
-  next();
 };
