@@ -107,6 +107,7 @@ body {
     border-radius: 6px;
     border: 1px solid #ddd;
     background: white;
+    color: #088178;
     cursor: pointer;
 }
 .cart-item-qty .qty-input {
@@ -114,6 +115,7 @@ body {
     text-align: center;
     height: 30px;
     border: 1px solid #e6e6e6;
+    color: #088178;
     border-radius: 6px;
 }
 .cart-item-actions {
