@@ -1,7 +1,10 @@
 import Order from "../models/order.model.js";
 import Clothing from "../models/clothing.model.js";
+import User from "../models/user.model.js"; // NOVO: Necessário para buscar o e-mail do cliente
 import sequelize from "../models/dbconfig.js";
 import { Op } from "sequelize";
+
+import { sendOrderReceiptEmail } from "../services/email.service.js";
 
 // ─────────────────────────────────────────────
 // HELPERS
@@ -175,9 +178,19 @@ export const webhookMercadoPago = async (req, res) => {
 
     order.status = "Pago";
     await order.save({ transaction });
-    await transaction.commit();
+    await transaction.commit(); // ✅ Transação finalizada e banco liberado
 
     console.log(`✅ Pedido #${orderId} confirmado via Mercado Pago`);
+
+    // 📩 Disparo de E-mail Assíncrono (Pós-Commit)
+    try {
+      const user = await User.findByPk(order.userId);
+      if (user) {
+        sendOrderReceiptEmail(user, order);
+      }
+    } catch (emailError) {
+      console.error("Erro ao enviar e-mail de recibo (Webhook):", emailError);
+    }
   } catch (err) {
     await transaction.rollback();
     console.error("Erro no webhook MP:", err);
@@ -272,7 +285,20 @@ export const confirmOrderPayment = async (req, res) => {
 
     order.status = "Pago";
     await order.save({ transaction });
-    await transaction.commit();
+    await transaction.commit(); // ✅ Transação finalizada e banco liberado
+
+    // 📩 Disparo de E-mail Assíncrono (Ação Manual do Admin)
+    try {
+      const user = await User.findByPk(order.userId);
+      if (user) {
+        sendOrderReceiptEmail(user, order);
+      }
+    } catch (emailError) {
+      console.error(
+        "Erro ao enviar e-mail de recibo (Painel Admin):",
+        emailError,
+      );
+    }
 
     res
       .status(200)
