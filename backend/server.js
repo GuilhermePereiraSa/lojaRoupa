@@ -28,6 +28,6 @@ app.get("/health", (req, res) => {
     .json({ status: "OK", message: "Servidor funciona normalmente." });
 });
 
-sequelize.sync({ alter: true }).then(() => {
+sequelize.sync({}).then(() => {
   app.listen(3001, () => console.log("Server rodando na 3001"));
 });

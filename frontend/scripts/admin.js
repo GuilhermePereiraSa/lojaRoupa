@@ -166,6 +166,7 @@ async function carregarClientes(token) {
       tr.innerHTML = `
           <td>#${cliente.id}</td>
           <td>${cliente.username}</td>
+          <td>${cliente.email}</td>
           <td>${cliente.isAdmin ? "Sim (Admin)" : "Não (Cliente)"}</td>
           <td>${dataCadastro}</td>
       `;
