@@ -57,7 +57,7 @@ class AuthConfig {
   }
 
   logOut() {
-    localStorage.removeItem("Token");
+    localStorage.clear();
     // Caminho absoluto para o redirecionamento funcionar em qualquer tela
     window.location.href = "/pages/login.html";
   }

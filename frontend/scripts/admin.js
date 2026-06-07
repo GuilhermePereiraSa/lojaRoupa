@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
       e.preventDefault();
       // Remove os tokens da memória do navegador
       localStorage.removeItem("Token");
-      localStorage.removeItem("token");
+      localStorage.removeItem("cart");
       // Redireciona de volta para a tela de login
       window.location.href = "/pages/login.html";
     });
@@ -161,12 +161,14 @@ async function carregarClientes(token) {
         "pt-BR",
       );
       const tr = document.createElement("tr");
+
+      // Adaptado para os campos reais: username e isAdmin
       tr.innerHTML = `
-                <td>#${cliente.id}</td>
-                <td>${cliente.name || cliente.nome || cliente.username}</td>
-                <td>${cliente.email || "Nenhum e-mail registrado"}</td>
-                <td>${dataCadastro}</td>
-            `;
+          <td>#${cliente.id}</td>
+          <td>${cliente.username}</td>
+          <td>${cliente.isAdmin ? "Sim (Admin)" : "Não (Cliente)"}</td>
+          <td>${dataCadastro}</td>
+      `;
       tbody.appendChild(tr);
     });
   } catch (error) {
