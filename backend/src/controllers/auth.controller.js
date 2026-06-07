@@ -247,8 +247,8 @@ export const forgotPassword = async (req, res) => {
 
     const resetUrl = `${process.env.FRONTEND_URL}/pages/redefinir-senha.html?token=${resetToken}`;
 
-    // Nova abordagem: Enviando via API HTTP do Brevo (Bypass no bloqueio do Render)
-    const response = await axios.post(
+    // Disparo da API HTTP usando Axios
+    await axios.post(
       "https://api.brevo.com/v3/smtp/email",
       {
         sender: {
@@ -280,20 +280,17 @@ export const forgotPassword = async (req, res) => {
       },
     );
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error("Erro da API do Brevo:", errorData);
-      return res
-        .status(500)
-        .json({ message: "Falha ao enviar o e-mail de recuperação pela API." });
-    }
-
+    // Se a execução chegou aqui, o Axios confirmou que a API retornou Sucesso (Status 2xx).
     return res.status(200).json({
       message:
         "Se o e-mail existir em nossa base, um link de recuperação será enviado.",
     });
   } catch (error) {
-    console.error("Erro no forgotPassword: ", error);
+    // Tratamento de erro otimizado para extrair a mensagem real da API do Brevo
+    console.error(
+      "Erro no forgotPassword: ",
+      error.response ? error.response.data : error.message,
+    );
     return res
       .status(500)
       .json({ message: "Erro interno ao processar a solicitação." });
