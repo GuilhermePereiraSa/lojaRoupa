@@ -22,8 +22,7 @@ class Login {
       });
 
       if (error == 0) {
-        // CORREÇÃO 1: Removido os parênteses de value
-        const email = document.querySelector("email").value;
+        const email = document.querySelector("#email").value;
         const password = document.querySelector("#password").value;
 
         try {
@@ -75,7 +74,7 @@ class Login {
             `${field.previousElementSibling.innerText} deve ter 8 caracteres`,
             "error",
           );
-          return false; // Faltava retornar false aqui
+          return false;
         } else {
           this.setStatus(field, null, "sucess");
           return true;
@@ -92,7 +91,6 @@ class Login {
 
     if (status == "sucess") {
       if (errorMessage) {
-        // CORREÇÃO 2: Estava "error.errorMessage.innerText"
         errorMessage.innerText = "";
       }
       field.classList.remove("input-error");
