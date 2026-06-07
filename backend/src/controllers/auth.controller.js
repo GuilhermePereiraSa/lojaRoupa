@@ -146,10 +146,18 @@ export const updateProfile = async (req, res) => {
     if (!usuario)
       return res.status(404).json({ error: "Erro ao carregar perfil." });
 
-    await usuario.update({ username, password });
+    const updates = { username };
+
+    if (password) {
+      const salt = await bcrypt.genSalt(10);
+      updates.password = await bcrypt.hash(password, salt);
+    }
+
+    await usuario.update(updates);
+
     res.status(200).json({
       message: "Perfil atualizado com sucesso!",
-      user: { username, password },
+      user: { username },
     });
   } catch (error) {
     res.status(500).json({ error: "Erro ao carregar dados do perfil." });
@@ -178,6 +186,12 @@ export const changePassword = async (req, res) => {
     const { senhaAtual, novaSenha } = req.body;
 
     const userId = req.userId;
+
+    if (novaSenha.length < 8) {
+      return res
+        .status(400)
+        .json({ error: "A nova senha deve ter pelo menos 8 caracteres." });
+    }
 
     if (!senhaAtual || !novaSenha) {
       return res
@@ -233,9 +247,7 @@ export const forgotPassword = async (req, res) => {
     });
 
     const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 465,
-      secure: true,
+      service: "gmail",
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
