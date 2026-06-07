@@ -6,6 +6,7 @@ import crypto from "crypto";
 import nodemailer from "nodemailer";
 import { Op } from "sequelize";
 import { rateLimit } from "express-rate-limit";
+import { Resend } from "resend";
 
 dotenv.config();
 
@@ -220,6 +221,8 @@ export const changePassword = async (req, res) => {
   }
 };
 
+const resend = new Resend(process.env.RESEND_API_KEY);
+
 export const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
@@ -238,7 +241,6 @@ export const forgotPassword = async (req, res) => {
     }
 
     const resetToken = crypto.randomBytes(20).toString("hex");
-
     const expireTime = new Date(Date.now() + 3600000);
 
     await user.update({
@@ -246,37 +248,29 @@ export const forgotPassword = async (req, res) => {
       resetPasswordExpires: expireTime,
     });
 
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
-
     const resetUrl = `${process.env.FRONTEND_URL}/pages/redefinir-senha.html?token=${resetToken}`;
 
-    const mailOptions = {
-      from: `"Loja Leila" <${process.env.EMAIL_USER}>`,
+    // Disparo de e-mail via API da Resend
+    const { data, error } = await resend.emails.send({
+      from: "Loja Leila <onboarding@resend.dev>", // Em dev, use o e-mail padrão do Resend
       to: user.email,
       subject: "Recuperação de Senha - Loja Leila",
-      text: `Você solicitou a redefinição de senha.\n\nClique no link abaixo ou cole no seu navegador para criar uma nova senha:\n\n${resetUrl}\n\nSe você não solicitou isso, ignore este e-mail e sua senha permanecerá inalterada.\n\nO link expira em 1 hora.`,
-    };
-
-    await new Promise((resolve, reject) => {
-      transporter.verify(function (error, success) {
-        if (error) {
-          console.log("Erro de configuração do SMTP:", error);
-          reject(error);
-        } else {
-          console.log("Servidor pronto para enviar as mensagens!");
-          resolve(success);
-        }
-      });
+      html: `
+        <h2>Recuperação de Senha</h2>
+        <p>Você solicitou a redefinição de senha.</p>
+        <p>Clique no link abaixo para criar uma nova senha:</p>
+        <a href="${resetUrl}">${resetUrl}</a>
+        <p>Se você não solicitou isso, ignore este e-mail e sua senha permanecerá inalterada.</p>
+        <p>O link expira em 1 hora.</p>
+      `,
     });
 
-    // Envia o e-mail
-    await transporter.sendMail(mailOptions);
+    if (error) {
+      console.error("Erro da API Resend:", error);
+      return res
+        .status(500)
+        .json({ message: "Falha ao enviar o e-mail de recuperação." });
+    }
 
     return res.status(200).json({
       message:
