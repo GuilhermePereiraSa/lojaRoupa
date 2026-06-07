@@ -57,31 +57,101 @@ export const createOrder = async (req, res) => {
       userId: userId,
     });
 
-    // 5. Gerar o Pix com os dados reais do Pedido criado
-    const pixChave = process.env.PIX_KEY;
+    const mpResponse = await fetch("https://api.mercadopago.com/v1/payments", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.MP_ACCESS_TOKEN}`,
+        "X-Idempotency-Key": `pedido-${novoPedido.id}`,
+      },
+      body: JSON.stringify({
+        transaction_amount: totalAmount,
+        payment_method_id: "pix",
+        payer: { email: "contato@lojaleia.com.br" }, // email da loja por enquanto
+        description: `Pedido #${novoPedido.id} - Loja Leila`,
+        external_reference: String(novoPedido.id), // liga o pagamento MP ao seu pedido
+        notification_url: `${process.env.BASE_URL}/api/orders/webhook/mp`,
+      }),
+    });
 
-    const pixCopiaECola = generatePixPayload(
-      pixChave,
-      "Loja Leila",
-      "Sao Carlos", // Cidade do lojista
-      "***", // Usar *** para máxima compatibilidade em Pix Estático
-      totalAmount, // Valor total seguro e calculado no back-end
-    );
+    const mpData = await mpResponse.json();
+    const pix = mpData.point_of_interaction?.transaction_data;
 
-    const qrCodeImage = await QRCode.toDataURL(pixCopiaECola);
+    if (!pix) {
+      console.error("Erro MP: ", mpData);
+      return res.status(502).json({ message: "Erro ao gerar cobrança Pix." });
+    }
 
-    // 6. Responder ao Front-end com Sucesso
     res.status(201).json({
       message: "Pedido criado! Aguardando pagamento.",
       orderId: novoPedido.id,
       pix: {
-        copiaECola: pixCopiaECola,
-        qrCodeImage: qrCodeImage,
+        copiaECola: pix.qr_code,
+        qrCodeImage: `data:image/png;base64,${pix.qr_code_base64}`,
       },
     });
   } catch (error) {
     console.error("Erro ao gerar pedido:", error);
     res.status(500).json({ error: "Erro interno ao processar o checkout" });
+  }
+};
+
+export const webhookMercadoPago = async (req, res) => {
+  res.status(200).json({ ok: true });
+
+  const { type, data } = req.body;
+
+  if (type !== "payment" || !data?.id) return;
+
+  const paymentRes = await fetch(
+    `https://api.mercadopago.com/v1/payments/${data.id}`,
+    { headers: { Authorization: `Bearer ${process.env.MP_ACCESS_TOKEN}` } },
+  );
+
+  const payment = await paymentRes.json();
+
+  if (payment.status !== "approved") return;
+
+  const orderId = payment.external_reference;
+
+  const transactionBD = await sequelize.transaction();
+
+  try {
+    const order = await Order.findByPk(orderId, {
+      transaction: transactionBD,
+      lock: transactionBD.LOCK.UPDATE,
+    });
+
+    if (!order || order.status === "Pago") {
+      return await transactionBD.rollback();
+    }
+
+    for (const item of order.items) {
+      const [affectedRows] = await Clothing.update(
+        { stock: sequelize.literal("stock-1") },
+        {
+          where: { id: item.id, stock: { [Op.gte]: 1 } },
+          transaction: transactionBD,
+        },
+      );
+
+      if (affectedRows === 0) {
+        await transactionBD.rollback();
+        order.status = "Sem Estoque";
+        await order.save();
+        return;
+      }
+    }
+
+    order.status = "Pago";
+
+    await order.save({ transaction: transactionBD });
+    await transactionBD.commit();
+
+    console.log(`✅ Pedido #${orderId} confirmado via Mercado Pago`);
+  } catch (err) {
+    await transactionBD.rollback();
+    console.error("Erro no webhook MP:", err);
   }
 };
 
