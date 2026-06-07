@@ -4,7 +4,7 @@ import User from "../models/user.model.js"; // NOVO: Necessário para buscar o e
 import sequelize from "../models/dbconfig.js";
 import { Op } from "sequelize";
 
-import CartItem from "../models/cartItem.model.js";
+import CartItem from "../models/CartItem.model.js";
 
 import {
   sendOrderReceiptEmail,

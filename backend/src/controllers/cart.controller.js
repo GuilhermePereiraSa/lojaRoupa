@@ -1,4 +1,4 @@
-import CartItem from "../models/CartItem.js";
+import CartItem from "../models/CartItem.model.js";
 import Clothing from "../models/clothing.model.js";
 
 export const getCart = async (req, res) => {
