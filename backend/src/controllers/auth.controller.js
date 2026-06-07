@@ -11,21 +11,24 @@ dotenv.config();
 
 export const register = async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { username, email, password } = req.body;
 
-    // Verifica no banco de dados se existe já, deve ser unico
-    const userExists = await User.findOne({ where: { username } });
+    if (!username || !email || !password) {
+      return res
+        .status(400)
+        .json({ message: "Usuário, email e senha são obrigatórios." });
+    }
+
+    const userExists = await User.findOne({
+      where: {
+        [Op.or]: [{ username }, { email }],
+      },
+    });
 
     if (userExists) {
       return res
         .status(400)
-        .json({ message: "Este usuário já está cadastrado." });
-    }
-
-    if (!username || !password) {
-      return res
-        .status(400)
-        .json({ message: "Usuário e senha são obrigatórios." });
+        .json({ message: "Nome de usuário ou e-mail já cadastrado." });
     }
 
     // gera hash
@@ -34,8 +37,9 @@ export const register = async (req, res) => {
 
     const hashedPass = await bcrypt.hash(password, salt);
 
-    const newUser = await User.create({
+    await User.create({
       username,
+      email,
       password: hashedPass,
     });
 
@@ -103,7 +107,7 @@ export const logout = async (req, res, next) => {
 export const getAllUsers = async (req, res) => {
   try {
     const usuarios = await User.findAll({
-      attributes: ["id", "username", "isAdmin", "createdAt"],
+      attributes: ["id", "username", "email", "isAdmin", "createdAt"],
     });
     res.status(200).json(usuarios);
   } catch (error) {
@@ -119,7 +123,7 @@ export const getAllUsers = async (req, res) => {
 export const getUserProfile = async (req, res) => {
   try {
     const usuario = await User.findByPk(req.userId, {
-      attributes: ["id", "username", "isAdmin", "createdAt"],
+      attributes: ["id", "username", "email", "isAdmin", "createdAt"],
     });
     if (!usuario)
       return res.status(404).json({ error: "Erro ao carregar perfil." });

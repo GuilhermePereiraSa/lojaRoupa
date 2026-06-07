@@ -19,7 +19,14 @@ User.init(
       type: DataTypes.STRING,
       allowNull: false, // Onde guardaremos o hash do bcrypt
     },
-
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+      validate: {
+        isEmail: true,
+      },
+    },
     isAdmin: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
