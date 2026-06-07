@@ -1,97 +1,69 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-        <link rel="stylesheet" href="../css/shop.css" />
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-        <link
-            href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css"
-            rel="stylesheet"
-        />
-        <link
-            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css"
-            rel="stylesheet"
-        />
+    <link rel="stylesheet" href="../css/shop.css" />
 
-        <script src="../scripts/init.js" defer></script>
-        <script src="../scripts/shop.js" defer></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet" />
 
-        <title>Loja - Ecommerce</title>
-    </head>
-    <body>
-        <section id="header">
-            <!-- logo? image here  - class logo
+    <script src="../scripts/init.js" defer></script>
+    <script src="../scripts/shop.js" defer></script>
+
+    <title>Loja - Ecommerce</title>
+</head>
+
+<body>
+    <section id="header">
+        <!-- logo? image here  - class logo
         space between - logo and list below
         -->
 
-            <div>
-                <ul id="navbar">
-                    <li><a href="../index.html">Início</a></li>
-                    <li><a class="active" href="shop.html">Loja Leila</a></li>
-                    <li><a href="about.html">Sobre</a></li>
-                    <li><a href="contact.html">Contato</a></li>
-                    <li>
-                        <a href="cart.html"
-                            ><i class="ri-shopping-bag-line"></i
-                        ></a>
-                    </li>
-                </ul>
+        <div>
+            <ul id="navbar">
+                <li><a href="../index.html">Início</a></li>
+                <li><a class="active" href="shop.html">Loja Leila</a></li>
+                <li><a href="about.html">Sobre</a></li>
+                <li><a href="contact.html">Contato</a></li>
+                <li>
+                    <a href="cart.html"><i class="ri-shopping-bag-line"></i></a>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <section id="hero">
+        <div class="hero-container">
+            <div class="hero-text">
+                <h1>Novas Roupas</h1>
+                <p>Aproveita que elas acabaram de chegar!</p>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <section id="hero">
-            <div class="hero-container">
-                <div class="hero-text">
-                    <h1>Novas Roupas</h1>
-                    <p>Aproveita que elas acabaram de chegar!</p>
-                </div>
-            </div>
-        </section>
+    <section id="products" class="section-p1">
+        <div class="pro-container"></div>
+    </section>
 
-        <section id="products" class="section-p1">
-            <div class="pro-container"></div>
-        </section>
+    <section id="pagination" class="section-p1">
+        <a href="#">1</a>
+        <a href="#">2</a>
+        <a href="#"><i class="bi bi-arrow-right"></i></a>
+    </section>
 
-        <section id="pagination" class="section-p1">
-            <a href="#">1</a>
-            <a href="#">2</a>
-            <a href="#"><i class="bi bi-arrow-right"></i></a>
-        </section>
+    <div id="footer-container"></div>
 
-        <div id="footer-container"></div>
-
-        <script>
-            fetch("footer.html")
-                .then((response) => response.text())
-                .then((data) => {
-                    document.getElementById("footer-container").innerHTML =
-                        data;
-                });
-
-            // Cart functionality
-            document.addEventListener("DOMContentLoaded", () => {
-                const addToCartButtons =
-                    document.querySelectorAll(".add-to-cart");
-                addToCartButtons.forEach((button) => {
-                    button.addEventListener("click", () => {
-                        const name = button.getAttribute("data-name");
-                        const price = parseFloat(
-                            button.getAttribute("data-price"),
-                        );
-                        const img = button.getAttribute("data-img");
-                        addToCart(name, price, img);
-                        alert(`${name} adicionado ao carrinho!`);
-                    });
-                });
+    <script>
+        fetch("footer.html")
+            .then((response) => response.text())
+            .then((data) => {
+                document.getElementById("footer-container").innerHTML =
+                    data;
             });
+    </script>
+</body>
 
-            function addToCart(name, price, img) {
-                let cart = JSON.parse(localStorage.getItem("cart")) || [];
-                cart.push({ name, price, img });
-                localStorage.setItem("cart", JSON.stringify(cart));
-            }
-        </script>
-    </body>
 </html>

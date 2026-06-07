@@ -116,16 +116,54 @@ function displayCart() {
     cartItemsContainer.innerHTML = "<p>Seu carrinho está vazio.</p>";
   } else {
     cart.forEach((item, index) => {
-      total += item.price;
+      const quantity = item.quantity || 1;
+      total += item.price * quantity;
       const itemDiv = document.createElement("div");
       itemDiv.className = "cart-item";
       itemDiv.innerHTML = `
-                <img src="${item.img}" alt="${item.name}" style="width: 50px; height: 50px;">
-                <span>${item.name}</span>
-                <span>R$ ${item.price.toFixed(2)}</span>
-                <button onclick="removeFromCart(${index})">Remover</button>
+                <img src="${item.img}" alt="${item.name}" style="width: 70px; height: 70px; object-fit: cover;">
+                <div class="cart-item-info">
+                  <span class="cart-item-name">${item.name}</span>
+                  <span class="cart-item-price">R$ ${item.price.toFixed(2)}</span>
+                </div>
+                <div class="cart-item-qty">
+                  <button class="qty-decrease" data-index="${index}">-</button>
+                  <input type="number" min="1" class="qty-input" data-index="${index}" value="${quantity}" />
+                  <button class="qty-increase" data-index="${index}">+</button>
+                </div>
+                <div class="cart-item-actions">
+                  <span class="cart-item-subtotal">R$ ${(item.price * quantity).toFixed(2)}</span>
+                  <button class="remove-btn" data-index="${index}">Remover</button>
+                </div>
             `;
       cartItemsContainer.appendChild(itemDiv);
+    });
+
+    // Attach quantity and remove handlers
+    document.querySelectorAll(".qty-increase").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        const idx = parseInt(btn.getAttribute("data-index"), 10);
+        changeQuantity(idx, 1);
+      });
+    });
+    document.querySelectorAll(".qty-decrease").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        const idx = parseInt(btn.getAttribute("data-index"), 10);
+        changeQuantity(idx, -1);
+      });
+    });
+    document.querySelectorAll(".qty-input").forEach((input) => {
+      input.addEventListener("change", (e) => {
+        const idx = parseInt(input.getAttribute("data-index"), 10);
+        const val = parseInt(input.value, 10) || 1;
+        setQuantity(idx, val);
+      });
+    });
+    document.querySelectorAll(".remove-btn").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        const idx = parseInt(btn.getAttribute("data-index"), 10);
+        removeFromCart(idx);
+      });
     });
   }
 
@@ -135,6 +173,25 @@ function displayCart() {
 function removeFromCart(index) {
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
   cart.splice(index, 1);
+  localStorage.setItem("cart", JSON.stringify(cart));
+  displayCart();
+}
+
+function changeQuantity(index, delta) {
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+  if (!cart[index]) return;
+  const current = parseInt(cart[index].quantity || 1, 10);
+  const updated = Math.max(1, current + delta);
+  cart[index].quantity = updated;
+  localStorage.setItem("cart", JSON.stringify(cart));
+  displayCart();
+}
+
+function setQuantity(index, value) {
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+  if (!cart[index]) return;
+  const updated = Math.max(1, parseInt(value, 10) || 1);
+  cart[index].quantity = updated;
   localStorage.setItem("cart", JSON.stringify(cart));
   displayCart();
 }
