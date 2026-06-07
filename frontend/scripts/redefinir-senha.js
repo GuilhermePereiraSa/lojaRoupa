@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Captura o token da URL (ex: ?token=a1b2c3d4)
   const urlParams = new URLSearchParams(window.location.search);
-  const token = urlParams.get("token");
+  const token = urlParams.get("Token");
 
   // Se a pessoa tentar acessar a página sem token na URL, bloqueamos a ação
   if (!token) {

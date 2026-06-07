@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("Token");
 
   if (!token) {
     window.location.href = "login.html";
@@ -22,8 +22,7 @@ async function carregarDadosPerfil(token) {
 
     if (response.ok) {
       const usuario = await response.json();
-      document.getElementById("user-name").innerText =
-        usuario.name || usuario.nome;
+      document.getElementById("user-name").innerText = usuario.username;
       document.getElementById("user-email").innerText = usuario.email;
 
       document.getElementById("dados-carregando").style.display = "none";
@@ -69,7 +68,7 @@ async function carregarHistoricoPedidos(token) {
       const dataFormatada = new Date(pedido.createdAt).toLocaleDateString(
         "pt-BR",
       );
-      const totalFormatado = Number(pedido.total).toLocaleString("pt-BR", {
+      const totalFormatado = Number(pedido.totalPrice).toLocaleString("pt-BR", {
         style: "currency",
         currency: "BRL",
       });

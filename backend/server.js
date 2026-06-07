@@ -14,7 +14,7 @@ import "./src/models/order.model.js";
 const app = express();
 app.set("trust proxy", 1);
 
-app.use(cors());
+app.use(cors({ origin: "https://lojaleila.onrender.com" }));
 app.use(express.json()); // Apresentacao - formatacao padrao
 app.use(express.urlencoded({ extended: true }));
 

@@ -5,12 +5,11 @@ document.addEventListener("DOMContentLoaded", () => {
     formRegistro.addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      // CORREÇÃO 1: Removido os parênteses do value
       const username = document.getElementById("reg-username").value;
+      const email = document.getElementById("reg-email").value;
       const password = document.getElementById("reg-password").value;
 
       try {
-        // CORREÇÃO 2: Atualizado para a porta 3001
         const response = await fetch(
           "https://api-lojaleila.onrender.com/api/auth/register",
           {
@@ -18,8 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
             headers: {
               "Content-type": "application/json",
             },
-            // CORREÇÃO 3: stringify escrito corretamente (com 'i')
-            body: JSON.stringify({ username, password }),
+            body: JSON.stringify({ username, email, password }),
           },
         );
 
@@ -27,7 +25,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (response.ok) {
           alert("Conta criada com sucesso!");
-          // CORREÇÃO 4: Apontando para o arquivo HTML correto
           window.location.href = "login.html";
         } else {
           alert(`Erro: ${data.message}`);

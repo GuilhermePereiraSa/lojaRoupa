@@ -106,7 +106,7 @@ export const createOrder = async (req, res) => {
           payer: { email: "contato@lojaleia.com.br" },
           description: `Pedido #${novoPedido.id} - Loja Leila`,
           external_reference: String(novoPedido.id),
-          notification_url: `${process.env.BASE_URL}/api/orders/webhook/mp`,
+          notification_url: `${process.env.BASE_URL}/api/pedidos/webhook/mp`,
         }),
       },
     );

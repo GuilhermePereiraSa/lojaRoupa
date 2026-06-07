@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("Token");
 
   // Se tentar acessar a tela de trocar senha sem estar logado, volta pro login
   if (!token) {
@@ -14,17 +14,35 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const senhaAtual = document.getElementById("senhaAtual").value;
     const novaSenha = document.getElementById("novaSenha").value;
+    const confirmarNovaSenha =
+      document.getElementById("confirmarNovaSenha").value;
     const messageDiv = document.getElementById("password-message");
 
+    if (novaSenha !== confirmarNovaSenha) {
+      messageDiv.style.color = "red";
+      messageDiv.innerText =
+        "A confirmação da nova senha não confere. Tente novamente.";
+      return;
+    }
+
+    if (novaSenha.length < 8) {
+      messageDiv.style.color = "red";
+      messageDiv.innerText = "A nova senha deve ser no mínimo 8 caracteres.";
+      return;
+    }
+
     try {
-      const response = await fetch("/api/auth/change-password", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+      const response = await fetch(
+        "https://api-lojaleila.onrender.com/api/auth/change-password",
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ senhaAtual, novaSenha }),
         },
-        body: JSON.stringify({ senhaAtual, novaSenha }),
-      });
+      );
 
       const data = await response.json();
 
@@ -33,7 +51,6 @@ document.addEventListener("DOMContentLoaded", () => {
         messageDiv.innerText = data.message || "Senha alterada com sucesso!";
         form.reset();
 
-        // Opcional: Redirecionar de volta pro perfil após 2 segundos
         setTimeout(() => {
           window.location.href = "profile.html";
         }, 2000);

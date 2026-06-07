@@ -23,7 +23,7 @@ class Login {
 
       if (error == 0) {
         // CORREÇÃO 1: Removido os parênteses de value
-        const username = document.querySelector("#username").value;
+        const email = document.querySelector("email").value;
         const password = document.querySelector("#password").value;
 
         try {
@@ -34,7 +34,7 @@ class Login {
               headers: {
                 "Content-Type": "application/json",
               },
-              body: JSON.stringify({ username, password }),
+              body: JSON.stringify({ email, password }),
             },
           );
 
@@ -110,6 +110,6 @@ class Login {
 const form = document.querySelector(".loginForm");
 
 if (form) {
-  const fields = ["username", "password"];
+  const fields = ["email", "password"];
   const validator = new Login(form, fields);
 }

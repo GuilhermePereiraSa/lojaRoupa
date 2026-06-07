@@ -54,10 +54,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const data = await response.json();
 
         if (response.ok) {
-          // =========================================================
-          // INÍCIO DA LÓGICA DO PIX (Substitui o alert e displayCart)
-          // =========================================================
-
           // Selecionamos a tag <section> principal que engloba o carrinho no seu HTML
           const cartSection = document.querySelector("section");
 
@@ -97,10 +93,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
           // Limpa o carrinho local, pois o pedido já foi gerado no banco de dados
           localStorage.removeItem("cart");
-
-          // =========================================================
-          // FIM DA LÓGICA DO PIX
-          // =========================================================
         } else {
           // Exibe a mensagem de erro que vier do backend
           alert("Erro ao processar pedido: " + (data.error || data.message));
@@ -112,8 +104,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
-
-// Suas funções auxiliares continuam exatamente iguais:
 
 function displayCart() {
   const cart = JSON.parse(localStorage.getItem("cart")) || [];
