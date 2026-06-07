@@ -20,6 +20,15 @@ document.addEventListener("DOMContentLoaded", () => {
       e.preventDefault();
 
       const novaSenha = document.getElementById("novaSenha").value;
+      const confirmarNovaSenha =
+        document.getElementById("confirmarNovaSenha").value;
+
+      if (novaSenha !== confirmarNovaSenha) {
+        messageDiv.style.color = "red";
+        messageDiv.innerText =
+          "A confirmação da nova senha não confere. Tente novamente.";
+        return;
+      }
 
       // Validação simples seguindo a regra do seu projeto
       if (novaSenha.length < 8) {

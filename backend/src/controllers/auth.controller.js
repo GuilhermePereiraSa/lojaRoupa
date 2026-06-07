@@ -245,7 +245,7 @@ export const forgotPassword = async (req, res) => {
       resetPasswordExpires: expireTime,
     });
 
-    const resetUrl = `${process.env.FRONTEND_URL}/pages/redefinir-senha.html?token=${resetToken}`;
+    const resetUrl = `${process.env.FRONTEND_URL}/pages/redefinir-senha.html?Token=${resetToken}`;
 
     // Disparo da API HTTP usando Axios
     await axios.post(

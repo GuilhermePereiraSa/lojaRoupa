@@ -8,10 +8,14 @@
         <!-- Adicione o link para o seu arquivo de CSS aqui -->
     </head>
     <body>
-        <section id="header" style="background-color: #065a52;">
+        <section id="header" style="background-color: #065a52">
             <div>
                 <ul id="navbar">
-                    <li><a href="../index.html" style="color:aliceblue">Início</a></li>
+                    <li>
+                        <a href="../index.html" style="color: aliceblue"
+                            >Início</a
+                        >
+                    </li>
                 </ul>
             </div>
         </section>
@@ -30,6 +34,18 @@
                     <input
                         type="password"
                         id="novaSenha"
+                        required
+                        minlength="8"
+                        placeholder="No mínimo 8 caracteres"
+                    />
+                </div>
+
+                <div class="input-group">
+                    <label for="novaSenha">Confirmar Nova Senha:</label>
+                    <!-- Usando minlength="8" acompanhando a sua regra de validação do login -->
+                    <input
+                        type="password"
+                        id="confirmarNovaSenha"
                         required
                         minlength="8"
                         placeholder="No mínimo 8 caracteres"
