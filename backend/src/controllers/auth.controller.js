@@ -233,7 +233,9 @@ export const forgotPassword = async (req, res) => {
     });
 
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      host: "smtp.gmail.com",
+      port: 465,
+      secure: true,
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
@@ -248,6 +250,18 @@ export const forgotPassword = async (req, res) => {
       subject: "Recuperação de Senha - Loja Leila",
       text: `Você solicitou a redefinição de senha.\n\nClique no link abaixo ou cole no seu navegador para criar uma nova senha:\n\n${resetUrl}\n\nSe você não solicitou isso, ignore este e-mail e sua senha permanecerá inalterada.\n\nO link expira em 1 hora.`,
     };
+
+    await new Promise((resolve, reject) => {
+      transporter.verify(function (error, success) {
+        if (error) {
+          console.log("Erro de configuração do SMTP:", error);
+          reject(error);
+        } else {
+          console.log("Servidor pronto para enviar as mensagens!");
+          resolve(success);
+        }
+      });
+    });
 
     // Envia o e-mail
     await transporter.sendMail(mailOptions);
