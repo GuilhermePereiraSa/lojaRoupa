@@ -6,7 +6,6 @@ import crypto from "crypto";
 import nodemailer from "nodemailer";
 import { Op } from "sequelize";
 import { rateLimit } from "express-rate-limit";
-import { Resend } from "resend";
 
 dotenv.config();
 
@@ -221,8 +220,6 @@ export const changePassword = async (req, res) => {
   }
 };
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
@@ -234,6 +231,7 @@ export const forgotPassword = async (req, res) => {
     const user = await User.findOne({ where: { email } });
 
     if (!user) {
+      // Retornamos 200 sempre, por segurança (evita enumeração de usuários)
       return res.status(200).json({
         message:
           "Se o e-mail existir em nossa base, um link de recuperação será enviado.",
@@ -241,7 +239,7 @@ export const forgotPassword = async (req, res) => {
     }
 
     const resetToken = crypto.randomBytes(20).toString("hex");
-    const expireTime = new Date(Date.now() + 3600000);
+    const expireTime = new Date(Date.now() + 3600000); // 1 hora
 
     await user.update({
       resetPasswordToken: resetToken,
@@ -250,27 +248,34 @@ export const forgotPassword = async (req, res) => {
 
     const resetUrl = `${process.env.FRONTEND_URL}/pages/redefinir-senha.html?token=${resetToken}`;
 
-    // Disparo de e-mail via API da Resend
-    const { data, error } = await resend.emails.send({
-      from: "Loja Leila <onboarding@resend.dev>", // Em dev, use o e-mail padrão do Resend
+    // Configuração SMTP apontando para o Brevo
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: process.env.SMTP_PORT,
+      secure: false, // false para porta 587
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+    });
+
+    const mailOptions = {
+      from: `"Loja Leila" <contato.lojaleila@gmail.com>`,
       to: user.email,
       subject: "Recuperação de Senha - Loja Leila",
       html: `
-        <h2>Recuperação de Senha</h2>
-        <p>Você solicitou a redefinição de senha.</p>
+        <h3>Recuperação de Senha</h3>
+        <p>Você solicitou a redefinição de senha para a conta associada a este e-mail.</p>
         <p>Clique no link abaixo para criar uma nova senha:</p>
         <a href="${resetUrl}">${resetUrl}</a>
+        <br><br>
         <p>Se você não solicitou isso, ignore este e-mail e sua senha permanecerá inalterada.</p>
-        <p>O link expira em 1 hora.</p>
+        <p><em>O link expira em 1 hora.</em></p>
       `,
-    });
+    };
 
-    if (error) {
-      console.error("Erro da API Resend:", error);
-      return res
-        .status(500)
-        .json({ message: "Falha ao enviar o e-mail de recuperação." });
-    }
+    // Dispara o e-mail diretamente via Brevo
+    await transporter.sendMail(mailOptions);
 
     return res.status(200).json({
       message:
