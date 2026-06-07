@@ -1,0 +1,85 @@
+import CartItem from "../models/CartItem.js";
+import Clothing from "../models/clothing.model.js";
+
+export const getCart = async (req, res) => {
+  try {
+    const cartItems = await CartItem.findAll({
+      where: { userId: req.userId },
+      include: [
+        {
+          model: Clothing,
+          attributes: ["id", "name", "price", "size", "image", "stock"],
+        },
+      ],
+      order: [["createdAt", "ASC"]],
+    });
+    res.status(200).json(cartItems);
+  } catch (error) {
+    console.error("Erro ao buscar carrinho:", error);
+    res.status(500).json({ error: "Erro ao carregar o carrinho." });
+  }
+};
+
+export const addToCart = async (req, res) => {
+  try {
+    const { clothingId, quantity = 1 } = req.body;
+    const userId = req.userId;
+
+    let cartItem = await CartItem.findOne({
+      where: { userid, clothingId },
+    });
+
+    if (cartItem) {
+      cartItem.quantity += quantity;
+      await cartItem.save();
+    } else {
+      // nao existe? cria novo
+
+      cartItem = await CartItem.create({
+        userId,
+        clothingId,
+        quantity,
+      });
+    }
+
+    res
+      .status(200)
+      .json({ message: "Produto adicionado ao carrinho!", cartItem });
+  } catch (error) {
+    console.error("Erro ao adicionar ao carrinho:", error);
+    res.status(500).json({ error: "Erro ao adicionar produto." });
+  }
+};
+
+export const removeFromCart = async (req, res) => {
+  try {
+    const { id } = req.params; // ID do CartItem, não do produto
+    const userId = req.userId;
+
+    const deleted = await CartItem.destroy({
+      where: { id, userId }, // Garante que só apaga se for o dono do item
+    });
+
+    if (!deleted) {
+      return res
+        .status(404)
+        .json({ error: "Item não encontrado no carrinho." });
+    }
+
+    res.status(200).json({ message: "Produto removido com sucesso." });
+  } catch (error) {
+    console.error("Erro ao remover do carrinho:", error);
+    res.status(500).json({ error: "Erro ao remover produto." });
+  }
+};
+
+export const clearCart = async (req, res) => {
+  try {
+    await CartItem.destroy({
+      where: { userId: req.userId },
+    });
+    res.status(200).json({ message: "Carrinho esvaziado." });
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao limpar o carrinho." });
+  }
+};

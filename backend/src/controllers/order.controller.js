@@ -4,6 +4,8 @@ import User from "../models/user.model.js"; // NOVO: Necessário para buscar o e
 import sequelize from "../models/dbconfig.js";
 import { Op } from "sequelize";
 
+import CartItem from "../models/cartItem.model.js";
+
 import { sendOrderReceiptEmail } from "../services/email.service.js";
 
 // ─────────────────────────────────────────────
@@ -21,12 +23,20 @@ async function fetchMercadoPago(url, options) {
   });
 }
 
+// ─────────────────────────────────────────────
+// HELPERS ATUALIZADOS
+// ─────────────────────────────────────────────
+
+// Atualizado para suportar a quantidade exata do carrinho, em vez de baixar sempre 1
 async function decrementStock(items, transaction) {
   for (const item of items) {
+    const quantity = item.quantity || 1; // Pega a quantidade ou assume 1 por segurança
+
     const [affectedRows] = await Clothing.update(
-      { stock: sequelize.literal("stock - 1") },
+      { stock: sequelize.literal(`stock - ${quantity}`) },
       {
-        where: { id: item.id, stock: { [Op.gte]: 1 } },
+        // Só permite baixar se o stock atual for maior ou igual à quantidade solicitada
+        where: { id: item.id, stock: { [Op.gte]: quantity } },
         transaction,
       },
     );
@@ -37,67 +47,62 @@ async function decrementStock(items, transaction) {
 }
 
 // ─────────────────────────────────────────────
-// VALIDATION
-// ─────────────────────────────────────────────
-
-async function validateAndPriceItems(items) {
-  const itemIds = items.map((item) => item.id);
-
-  const produtosNoBanco = await Clothing.findAll({
-    where: { id: itemIds },
-  });
-
-  let totalAmount = 0;
-  const itensValidados = [];
-
-  for (const itemFront of items) {
-    const produtoReal = produtosNoBanco.find((p) => p.id === itemFront.id);
-
-    if (!produtoReal) {
-      return {
-        error: `Produto ID ${itemFront.id} não encontrado ou indisponível.`,
-      };
-    }
-
-    const precoReal = parseFloat(produtoReal.price);
-    totalAmount += precoReal;
-
-    itensValidados.push({
-      id: produtoReal.id,
-      name: produtoReal.name,
-      price: precoReal,
-    });
-  }
-
-  return { totalAmount, itensValidados };
-}
-
-// ─────────────────────────────────────────────
-// PUBLIC — Checkout
+// PUBLIC — Checkout (Refatorado para Carrinho no Back-end)
 // ─────────────────────────────────────────────
 
 export const createOrder = async (req, res) => {
   try {
-    const { items } = req.body;
     const userId = req.userId;
 
-    if (!items || items.length === 0) {
-      return res.status(400).json({ error: "Carrinho vazio." });
+    // 1. Em vez de ler req.body.items, procuramos o carrinho do usuário na base de dados
+    const cartItems = await CartItem.findAll({
+      where: { userId },
+      include: [{ model: Clothing }], // Faz o JOIN com a tabela de Roupas
+    });
+
+    if (!cartItems || cartItems.length === 0) {
+      return res.status(400).json({ error: "O seu carrinho está vazio." });
     }
 
-    const validated = await validateAndPriceItems(items);
-    if (validated.error) {
-      return res.status(404).json({ error: validated.error });
+    let totalAmount = 0;
+    const itensValidados = [];
+
+    // 2. Valida o stock atual e calcula o total multiplicando pela quantidade
+    for (const item of cartItems) {
+      const produto = item.Clothing;
+
+      if (!produto) {
+        return res
+          .status(404)
+          .json({ error: `Produto ID ${item.clothingId} não encontrado.` });
+      }
+
+      if (produto.stock < item.quantity) {
+        return res.status(409).json({
+          error: `O produto '${produto.name}' não possui stock suficiente para a quantidade solicitada.`,
+        });
+      }
+
+      const precoReal = parseFloat(produto.price);
+      totalAmount += precoReal * item.quantity; // Preço x Quantidade
+
+      // Monta o JSON que será guardado na coluna "items" da tabela Order
+      itensValidados.push({
+        id: produto.id,
+        name: produto.name,
+        price: precoReal,
+        quantity: item.quantity,
+      });
     }
 
-    const { totalAmount, itensValidados } = validated;
-
+    // 3. Cria o Pedido com os itens formatados
     const novoPedido = await Order.create({
       totalPrice: totalAmount,
       items: itensValidados,
       userId,
     });
 
+    // 4. Gera o Pix no Mercado Pago
     const mpRes = await fetchMercadoPago(
       "https://api.mercadopago.com/v1/payments",
       {
@@ -106,7 +111,7 @@ export const createOrder = async (req, res) => {
         body: JSON.stringify({
           transaction_amount: totalAmount,
           payment_method_id: "pix",
-          payer: { email: "contato@lojaleia.com.br" },
+          payer: { email: "contato@lojaleila.com.br" }, // Idealmente seria o email do User logado
           description: `Pedido #${novoPedido.id} - Loja Leila`,
           external_reference: String(novoPedido.id),
           notification_url: `${process.env.BASE_URL}/api/pedidos/webhook/mp`,
@@ -121,6 +126,9 @@ export const createOrder = async (req, res) => {
       console.error("Erro MP:", mpData);
       return res.status(502).json({ message: "Erro ao gerar cobrança Pix." });
     }
+
+    // 5. MÁGICA: Esvazia o carrinho do usuário após criar o pedido com sucesso!
+    await CartItem.destroy({ where: { userId } });
 
     res.status(201).json({
       message: "Pedido criado! Aguardando pagamento.",
