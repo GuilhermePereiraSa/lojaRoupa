@@ -103,21 +103,28 @@ export const logout = async (req, res, next) => {
 export const getAllUsers = async (req, res) => {
   try {
     const usuarios = await User.findAll({
-      attributes: ["id", "name", "email"],
+      attributes: ["id", "username", "isAdmin", "createdAt"],
     });
     res.status(200).json(usuarios);
   } catch (error) {
-    res.status(500).json({ message: "Erro do servidor interno." });
+    console.error("ERRO REAL NO GET ALL USERS:", error);
+
+    res.status(500).json({
+      message: "Erro do servidor interno.",
+      detalhe: error.message,
+    });
   }
 };
 
 export const getUserProfile = async (req, res) => {
   try {
     const usuario = await User.findByPk(req.userId, {
-      attributes: ["id", "name", "email"],
+      attributes: ["id", "username", "isAdmin", "createdAt"],
     });
     if (!usuario)
       return res.status(404).json({ error: "Erro ao carregar perfil." });
+
+    return res.status(200).json(usuario);
   } catch (error) {
     res.status(500).json({ error: "Erro ao carregar dados do perfil." });
   }
@@ -125,16 +132,16 @@ export const getUserProfile = async (req, res) => {
 
 export const updateProfile = async (req, res) => {
   try {
-    const { name, email } = req.body;
+    const { username, password } = req.body;
     const usuario = await User.findByPk(req.userId);
 
     if (!usuario)
       return res.status(404).json({ error: "Erro ao carregar perfil." });
 
-    await usuario.update({ name, email });
+    await usuario.update({ username, password });
     res.status(200).json({
       message: "Perfil atualizado com sucesso!",
-      user: { name, email },
+      user: { username, password },
     });
   } catch (error) {
     res.status(500).json({ error: "Erro ao carregar dados do perfil." });
