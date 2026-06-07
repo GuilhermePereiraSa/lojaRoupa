@@ -3,9 +3,9 @@ import User from "../models/user.model.js";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
-import nodemailer from "nodemailer";
 import { Op } from "sequelize";
 import { rateLimit } from "express-rate-limit";
+import axios from "axios";
 
 dotenv.config();
 
@@ -231,7 +231,6 @@ export const forgotPassword = async (req, res) => {
     const user = await User.findOne({ where: { email } });
 
     if (!user) {
-      // Retornamos 200 sempre, por segurança (evita enumeração de usuários)
       return res.status(200).json({
         message:
           "Se o e-mail existir em nossa base, um link de recuperação será enviado.",
@@ -248,34 +247,46 @@ export const forgotPassword = async (req, res) => {
 
     const resetUrl = `${process.env.FRONTEND_URL}/pages/redefinir-senha.html?token=${resetToken}`;
 
-    // Configuração SMTP apontando para o Brevo
-    const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: process.env.SMTP_PORT,
-      secure: false, // false para porta 587
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
+    // Nova abordagem: Enviando via API HTTP do Brevo (Bypass no bloqueio do Render)
+    const response = await axios.post(
+      "https://api.brevo.com/v3/smtp/email",
+      {
+        sender: {
+          email: "contato.lojaleila@gmail.com",
+          name: "Loja Leila",
+        },
+        to: [
+          {
+            email: user.email,
+          },
+        ],
+        subject: "Recuperação de Senha - Loja Leila",
+        htmlContent: `
+            <h3>Recuperação de Senha</h3>
+            <p>Você solicitou a redefinição de senha para a conta associada a este e-mail.</p>
+            <p>Clique no link abaixo para criar uma nova senha:</p>
+            <a href="${resetUrl}">${resetUrl}</a>
+            <br><br>
+            <p>Se você não solicitou isso, ignore este e-mail e sua senha permanecerá inalterada.</p>
+            <p><em>O link expira em 1 hora.</em></p>
+          `,
       },
-    });
+      {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          "api-key": process.env.BREVO_API_KEY,
+        },
+      },
+    );
 
-    const mailOptions = {
-      from: `"Loja Leila" <contato.lojaleila@gmail.com>`,
-      to: user.email,
-      subject: "Recuperação de Senha - Loja Leila",
-      html: `
-        <h3>Recuperação de Senha</h3>
-        <p>Você solicitou a redefinição de senha para a conta associada a este e-mail.</p>
-        <p>Clique no link abaixo para criar uma nova senha:</p>
-        <a href="${resetUrl}">${resetUrl}</a>
-        <br><br>
-        <p>Se você não solicitou isso, ignore este e-mail e sua senha permanecerá inalterada.</p>
-        <p><em>O link expira em 1 hora.</em></p>
-      `,
-    };
-
-    // Dispara o e-mail diretamente via Brevo
-    await transporter.sendMail(mailOptions);
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("Erro da API do Brevo:", errorData);
+      return res
+        .status(500)
+        .json({ message: "Falha ao enviar o e-mail de recuperação pela API." });
+    }
 
     return res.status(200).json({
       message:
