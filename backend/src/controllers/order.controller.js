@@ -6,7 +6,10 @@ import { Op } from "sequelize";
 
 import CartItem from "../models/cartItem.model.js";
 
-import { sendOrderReceiptEmail } from "../services/email.service.js";
+import {
+  sendOrderReceiptEmail,
+  sendStatusUpdateEmail,
+} from "../services/email.service.js";
 
 // ─────────────────────────────────────────────
 // HELPERS
@@ -50,14 +53,38 @@ async function decrementStock(items, transaction) {
 // PUBLIC — Checkout (Refatorado para Carrinho no Back-end)
 // ─────────────────────────────────────────────
 
+// ─────────────────────────────────────────────
+// PUBLIC — Checkout (Refatorado para Carrinho no Back-end e Logística Local)
+// ─────────────────────────────────────────────
+
 export const createOrder = async (req, res) => {
   try {
     const userId = req.userId;
+    // Recebendo os dados de entrega do front-end
+    const { deliveryMethod, deliveryAddress } = req.body;
 
-    // 1. Em vez de ler req.body.items, procuramos o carrinho do usuário na base de dados
+    // Validação de Logística
+    if (!deliveryMethod || !["retirada", "entrega"].includes(deliveryMethod)) {
+      return res.status(400).json({
+        error:
+          "Por favor, escolha um método de recebimento válido (retirada ou entrega).",
+      });
+    }
+
+    if (
+      deliveryMethod === "entrega" &&
+      (!deliveryAddress || deliveryAddress.trim() === "")
+    ) {
+      return res.status(400).json({
+        error:
+          "Para entregas, é necessário informar o endereço ou ponto de referência.",
+      });
+    }
+
+    // 1. Procuramos o carrinho do usuário na base de dados
     const cartItems = await CartItem.findAll({
       where: { userId },
-      include: [{ model: Clothing }], // Faz o JOIN com a tabela de Roupas
+      include: [{ model: Clothing }],
     });
 
     if (!cartItems || cartItems.length === 0) {
@@ -67,7 +94,7 @@ export const createOrder = async (req, res) => {
     let totalAmount = 0;
     const itensValidados = [];
 
-    // 2. Valida o stock atual e calcula o total multiplicando pela quantidade
+    // 2. Valida o stock atual e calcula o total
     for (const item of cartItems) {
       const produto = item.Clothing;
 
@@ -84,9 +111,8 @@ export const createOrder = async (req, res) => {
       }
 
       const precoReal = parseFloat(produto.price);
-      totalAmount += precoReal * item.quantity; // Preço x Quantidade
+      totalAmount += precoReal * item.quantity;
 
-      // Monta o JSON que será guardado na coluna "items" da tabela Order
       itensValidados.push({
         id: produto.id,
         name: produto.name,
@@ -95,11 +121,13 @@ export const createOrder = async (req, res) => {
       });
     }
 
-    // 3. Cria o Pedido com os itens formatados
+    // 3. Cria o Pedido com os itens e DADOS DE ENTREGA
     const novoPedido = await Order.create({
       totalPrice: totalAmount,
       items: itensValidados,
       userId,
+      deliveryMethod,
+      deliveryAddress: deliveryMethod === "entrega" ? deliveryAddress : null, // Limpa o endereço se for retirada
     });
 
     // 4. Gera o Pix no Mercado Pago
@@ -111,7 +139,7 @@ export const createOrder = async (req, res) => {
         body: JSON.stringify({
           transaction_amount: totalAmount,
           payment_method_id: "pix",
-          payer: { email: "contato@lojaleila.com.br" }, // Idealmente seria o email do User logado
+          payer: { email: "contato@lojaleila.com.br" },
           description: `Pedido #${novoPedido.id} - Loja Leila`,
           external_reference: String(novoPedido.id),
           notification_url: `${process.env.BASE_URL}/api/pedidos/webhook/mp`,
@@ -241,8 +269,71 @@ export const deleteOrder = async (req, res) => {
 };
 
 // ─────────────────────────────────────────────
-// ADMIN — Order management
+// ADMIN — Atualização de Status Logístico
 // ─────────────────────────────────────────────
+
+export const updateOrderStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    // Lista de status permitidos na máquina de estados do sistema
+    const allowedStatuses = [
+      "Pendente",
+      "Pago",
+      "Sem Estoque",
+      "Pronto para Retirada",
+      "Saiu para Entrega",
+      "Finalizado",
+    ];
+
+    if (!allowedStatuses.includes(status)) {
+      return res.status(400).json({ error: "Status inválido fornecido." });
+    }
+
+    // Procura o pedido e faz o JOIN com o User para termos o e-mail e nome do cliente
+    const order = await Order.findByPk(id, {
+      include: [{ model: User, attributes: ["username", "email"] }],
+    });
+
+    if (!order) {
+      return res.status(404).json({ error: "Pedido não encontrado." });
+    }
+
+    // Se o admin tentar colocar o mesmo status que já está, poupamos processamento
+    if (order.status === status) {
+      return res
+        .status(200)
+        .json({ message: "O pedido já possui este status.", order });
+    }
+
+    // Atualiza a base de dados
+    order.status = status;
+    await order.save();
+
+    // 📩 Disparo da automação de e-mail (apenas para os eventos logísticos)
+    if (["Pronto para Retirada", "Saiu para Entrega"].includes(status)) {
+      try {
+        if (order.User) {
+          // O serviço não usa "await" para a resposta da API ser instantânea para a Dona Leila
+          sendStatusUpdateEmail(order.User, order);
+        }
+      } catch (emailError) {
+        console.error("Erro ao notificar cliente sobre a entrega:", emailError);
+      }
+    }
+
+    return res.status(200).json({
+      message: `Status atualizado para '${status}' com sucesso! A cliente será notificada.`,
+      order,
+    });
+  } catch (error) {
+    console.error("Erro ao atualizar status do pedido:", error);
+    return res
+      .status(500)
+      .json({ error: "Erro interno ao atualizar o pedido." });
+  }
+};
 
 export const getAdminOrders = async (req, res) => {
   try {

@@ -6,8 +6,9 @@ import {
   deleteOrder,
   getAdminOrders,
   webhookMercadoPago,
+  updateOrderStatus,
 } from "../controllers/order.controller.js";
-import { verifyToken } from "../middlewares/auth.middleware.js";
+import { verifyToken, verifyAdmin } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
@@ -18,5 +19,6 @@ router.get("/admin", verifyToken, getAdminOrders);
 router.patch("/:id/confirmar", verifyToken, confirmOrderPayment);
 router.delete("/:id", verifyToken, deleteOrder); // deletar pedido
 router.post("/webhook/mp", verifyToken, webhookMercadoPago);
+router.put("/:id/status", verifyToken, verifyAdmin, updateOrderStatus);
 
 export default router;

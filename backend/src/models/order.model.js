@@ -23,6 +23,18 @@ Order.init(
     status: {
       type: DataTypes.STRING,
       defaultValue: "Pendente",
+      // Futuros status: "Pago", "Pronto para Retirada", "Saiu para Entrega", "Finalizado"
+    },
+
+    // --- NOVOS CAMPOS LOGÍSTICOS ---
+    deliveryMethod: {
+      type: DataTypes.ENUM("retirada", "entrega"),
+      allowNull: false,
+      defaultValue: "retirada",
+    },
+    deliveryAddress: {
+      type: DataTypes.STRING,
+      allowNull: true, // Pode ser nulo porque se for "retirada", não precisa de endereço
     },
   },
   {

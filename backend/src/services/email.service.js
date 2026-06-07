@@ -58,3 +58,38 @@ export const sendOrderReceiptEmail = async (user, order) => {
 
   await sendBrevoEmail(user.email, user.username, subject, htmlContent);
 };
+
+export const sendStatusUpdateEmail = async (user, order) => {
+  let subject = "";
+  let htmlContent = "";
+
+  if (order.status === "Pronto para Retirada") {
+    subject = `O seu pedido está pronto! #${order.id} - Loja Leila`;
+    htmlContent = `
+          <h2>Olá, ${user.username}!</h2>
+          <p>Temos ótimas notícias! O seu pedido <strong>#${order.id}</strong> já está separado e embalado aqui em casa.</p>
+          <p>Pode passar aqui para pegar quando quiser!</p>
+          <br>
+          <p>Obrigada por comprar na Loja Leila.</p>
+        `;
+  } else if (order.status === "Saiu para Entrega") {
+    subject = `O seu pedido está a caminho! #${order.id} - Loja Leila`;
+    htmlContent = `
+          <h2>Olá, ${user.username}!</h2>
+          <p>O seu pedido <strong>#${order.id}</strong> acabou de sair para entrega.</p>
+          <p>Estou a caminho para entregar no endereço que nos indicou:</p>
+          <blockquote style="background-color: #f9f9f9; padding: 10px; border-left: 4px solid #065a52;">
+            <em>${order.deliveryAddress}</em>
+          </blockquote>
+          <p>Chego em breve!</p>
+          <br>
+          <p>Obrigada por comprar na Loja Leila.</p>
+        `;
+  } else {
+    // Se for outro status ("Finalizado", "Sem Estoque", etc.), não envia este e-mail específico
+    return;
+  }
+
+  // Dispara o e-mail
+  await sendBrevoEmail(user.email, user.username, subject, htmlContent);
+};
