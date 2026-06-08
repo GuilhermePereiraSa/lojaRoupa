@@ -4,6 +4,7 @@ import {
   addToCart,
   removeFromCart,
   clearCart,
+  updateCartQuantity,
 } from "../controllers/cart.controller.js";
 import { verifyToken } from "../middlewares/auth.middleware.js";
 
