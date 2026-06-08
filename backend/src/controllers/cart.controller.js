@@ -86,3 +86,41 @@ export const clearCart = async (req, res) => {
     res.status(500).json({ error: "Erro ao limpar o carrinho." });
   }
 };
+
+export const updateCartQuantity = async (req, res) => {
+  try {
+    const { id } = req.params; // ID do CartItem
+    const { quantity } = req.body; // Nova quantidade exata definida pelo usuário
+    const userId = req.userId; // Garantia de segurança via token
+
+    // Trava de segurança: impede enviar texto vazio, zero ou negativo
+    if (quantity === undefined || quantity < 1) {
+      return res
+        .status(400)
+        .json({ error: "A quantidade deve ser de pelo menos 1." });
+    }
+
+    // Procura o item garantindo que pertence ao usuário logado
+    const cartItem = await CartItem.findOne({
+      where: { id, userId },
+    });
+
+    if (!cartItem) {
+      return res
+        .status(404)
+        .json({ error: "Item não encontrado no carrinho." });
+    }
+
+    // Substitui a quantidade antiga pela nova
+    cartItem.quantity = quantity;
+    await cartItem.save();
+
+    res.status(200).json({
+      message: "Quantidade atualizada com sucesso!",
+      cartItem,
+    });
+  } catch (error) {
+    console.error("Erro ao atualizar quantidade do carrinho:", error);
+    res.status(500).json({ error: "Erro ao atualizar quantidade." });
+  }
+};
