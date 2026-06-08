@@ -23,22 +23,25 @@ export const getCart = async (req, res) => {
 export const addToCart = async (req, res) => {
   try {
     const { clothingId, quantity = 1 } = req.body;
+
+    // O middleware (verifyToken) injeta o ID aqui como req.userId
     const userId = req.userId;
 
+    // Verificar se o produto já existe no carrinho deste utilizador
     let cartItem = await CartItem.findOne({
-      where: { userid, clothingId },
+      where: { userId: userId, clothingId: clothingId },
     });
 
     if (cartItem) {
+      // Se já existe, apenas soma a quantidade
       cartItem.quantity += quantity;
       await cartItem.save();
     } else {
-      // nao existe? cria novo
-
+      // Se não existe, cria um novo registo
       cartItem = await CartItem.create({
-        userId,
-        clothingId,
-        quantity,
+        userId: userId,
+        clothingId: clothingId,
+        quantity: quantity,
       });
     }
 
