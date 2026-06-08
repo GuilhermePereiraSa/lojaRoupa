@@ -27,7 +27,7 @@ export const getClothingById = async (req, res) => {
 // POST CREATE
 export const createClothing = async (req, res) => {
   try {
-    const { name, price, size } = req.body;
+    const { name, price, size, stock } = req.body;
 
     if (!req.file) {
       return res
@@ -42,6 +42,7 @@ export const createClothing = async (req, res) => {
       name,
       price,
       size,
+      stock,
       image: imagePath,
     });
 
@@ -58,7 +59,7 @@ export const createClothing = async (req, res) => {
 export const updateClothing = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, price, size } = req.body;
+    const { name, price, size, stock } = req.body;
 
     const clothing = await Clothing.findByPk(id);
     if (!clothing)
@@ -71,6 +72,7 @@ export const updateClothing = async (req, res) => {
       name: name ?? clothing.name,
       price: price ?? clothing.price,
       size: size ?? clothing.size,
+      stock: stock ?? clothing.stock,
       image: imagePath,
     });
 
