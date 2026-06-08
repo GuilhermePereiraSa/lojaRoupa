@@ -51,6 +51,71 @@
             <div id="cart-items">
                 <!-- Itens do carrinho serão adicionados dinamicamente -->
             </div>
+
+            <div
+                id="delivery-options"
+                style="
+                    margin-top: 20px;
+                    padding: 15px;
+                    border: 1px solid #ddd;
+                    border-radius: 8px;
+                    text-align: left;
+                    background-color: #f9f9f9;
+                "
+            >
+                <h3 style="margin-bottom: 10px; font-size: 1.1rem">
+                    Como deseja receber seu pedido?
+                </h3>
+
+                <div style="margin-bottom: 8px">
+                    <input
+                        type="radio"
+                        id="retirada"
+                        name="deliveryMethod"
+                        value="retirada"
+                        checked
+                    />
+                    <label for="retirada" style="cursor: pointer"
+                        >Retirar na Loja (Grátis)</label
+                    >
+                </div>
+
+                <div>
+                    <input
+                        type="radio"
+                        id="entrega"
+                        name="deliveryMethod"
+                        value="entrega"
+                    />
+                    <label for="entrega" style="cursor: pointer"
+                        >Entregar no meu Endereço</label
+                    >
+                </div>
+
+                <div
+                    id="address-container"
+                    style="display: none; margin-top: 15px"
+                >
+                    <label
+                        for="deliveryAddress"
+                        style="font-weight: bold; font-size: 0.9rem"
+                        >Endereço de Entrega (com ponto de referência):</label
+                    >
+                    <input
+                        type="text"
+                        id="deliveryAddress"
+                        placeholder="Ex: Rua das Flores, 123 - Perto da padaria"
+                        style="
+                            width: 100%;
+                            padding: 10px;
+                            margin-top: 5px;
+                            border-radius: 4px;
+                            border: 1px solid #ccc;
+                            box-sizing: border-box;
+                        "
+                    />
+                </div>
+            </div>
             <div id="cart-total">
                 <p>Total: R$ 0,00</p>
                 <button id="checkout-btn">Finalizar Compra</button>

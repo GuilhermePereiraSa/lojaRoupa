@@ -28,14 +28,10 @@ export const addToCart = async (req, res) => {
     const userId = req.userId;
 
     // Verificar se o produto já existe no carrinho deste utilizador
-    let cartItem = await CartItem.findOne({
-      where: { userId: userId, clothingId: clothingId },
-    });
-
+    let cartItem = await CartItem.findOne({ where: { userId, clothingId } });
     if (cartItem) {
-      // Se já existe, apenas soma a quantidade
-      cartItem.quantity += quantity;
-      await cartItem.save();
+      // Isso delega a matemática para o banco de dados, evitando colisão!
+      await cartItem.increment("quantity", { by: quantity });
     } else {
       // Se não existe, cria um novo registo
       cartItem = await CartItem.create({
@@ -103,15 +99,21 @@ export const updateCartQuantity = async (req, res) => {
     // Procura o item garantindo que pertence ao usuário logado
     const cartItem = await CartItem.findOne({
       where: { id, userId },
+      include: [{ model: Clothing, attributes: ["stock"] }],
     });
 
-    if (!cartItem) {
+    if (!cartItem)
+      return res.status(404).json({ error: "Item não encontrado." });
+
+    // NOVA TRAVA: Impede de adicionar mais do que o estoque disponível
+    if (quantity > cartItem.Clothing.stock) {
       return res
-        .status(404)
-        .json({ error: "Item não encontrado no carrinho." });
+        .status(400)
+        .json({
+          error: `Temos apenas ${cartItem.Clothing.stock} unidades em estoque.`,
+        });
     }
 
-    // Substitui a quantidade antiga pela nova
     cartItem.quantity = quantity;
     await cartItem.save();
 
