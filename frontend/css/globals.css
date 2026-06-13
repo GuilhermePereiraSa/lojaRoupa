@@ -91,6 +91,19 @@ p {
     color: #088178;
 }
 
+/* Logo sizing */
+.logo img {
+    height: 60px;
+    width: auto;
+    display: block;
+}
+
+@media (max-width: 530px) {
+    .logo img {
+        height: 44px;
+    }
+}
+
 #navbar li a.active::after,
 #navbar li a:hover::after {
     content: "";
