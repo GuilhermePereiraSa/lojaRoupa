@@ -64,3 +64,37 @@ class AuthConfig {
 }
 
 const authConfig = new AuthConfig();
+
+// Setup mobile menu toggle (injects button and handlers)
+function setupMobileMenu() {
+  const header = document.getElementById("header");
+  const navBar = document.getElementById("navbar");
+  if (!header || !navBar) return;
+
+  if (!document.getElementById("menu-toggle")) {
+    const btn = document.createElement("button");
+    btn.id = "menu-toggle";
+    btn.setAttribute("aria-label", "Toggle menu");
+    btn.innerHTML = "&#9776;"; // hamburger
+    header.appendChild(btn);
+
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      navBar.classList.toggle("open");
+    });
+
+    // close when clicking outside
+    document.addEventListener("click", (e) => {
+      if (!header.contains(e.target) && navBar.classList.contains("open")) {
+        navBar.classList.remove("open");
+      }
+    });
+
+    // close when a nav link is clicked
+    navBar.querySelectorAll("a").forEach((a) =>
+      a.addEventListener("click", () => navBar.classList.remove("open")),
+    );
+  }
+}
+
+setupMobileMenu();
