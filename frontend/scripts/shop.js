@@ -2,12 +2,31 @@
 document.addEventListener("DOMContentLoaded", () => {
   fetchProducts();
 });
-
 async function fetchProducts() {
+  // 1. O container PRECISA ser declarado antes de qualquer coisa!
   const container = document.querySelector(".pro-container");
 
+  // 2. Verifica se o usuário tem o token
+  const token = localStorage.getItem("Token") || localStorage.getItem("token");
+
+  // 3. Trava de segurança: Se NÃO tiver logado
+  if (!token) {
+    if (container) {
+      container.innerHTML = `
+          <div style="text-align: center; width: 100%; padding: 40px;">
+            <h3 style="color: #065a52; margin-bottom: 15px;">Catálogo Exclusivo</h3>
+            <p style="font-size: 18px; margin-bottom: 20px;">Você precisa estar logado para ver nossas roupas e tendências.</p>
+            <button onclick="window.location.href='login.html'" style="background-color: #088178; padding: 12px 25px; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; font-weight: bold;">
+              Fazer Login ou Cadastrar
+            </button>
+          </div>
+        `;
+    }
+    return; // O "return" encerra a função aqui. O código abaixo não vai rodar!
+  }
+
+  // 4. Se passou pela trava (está logado), busca os produtos no banco
   try {
-    // ⚠️ Atenção: Certifique-se de que esta é a rota GET correta da sua API para listar as roupas
     const response = await fetch(
       "https://api-lojaleila.onrender.com/api/produtos",
     );
@@ -15,7 +34,7 @@ async function fetchProducts() {
     if (!response.ok) throw new Error("Erro ao buscar produtos do servidor");
 
     const products = await response.json();
-    container.innerHTML = ""; // Limpa o container antes de renderizar
+    container.innerHTML = "";
 
     if (products.length === 0) {
       container.innerHTML =
@@ -24,7 +43,6 @@ async function fetchProducts() {
     }
 
     products.forEach((produto) => {
-      // Formatação da imagem
       const imageUrl =
         produto.image && produto.image.startsWith("/public")
           ? `https://api-lojaleila.onrender.com${produto.image}`
@@ -35,7 +53,6 @@ async function fetchProducts() {
       const productCard = document.createElement("div");
       productCard.className = "pro";
 
-      // Constrói o HTML do card do produto
       productCard.innerHTML = `
         <img src="${imageUrl}" alt="${produto.name}" style="width: 100%; border-radius: 20px;">
         <div class="des">
@@ -55,7 +72,6 @@ async function fetchProducts() {
       container.appendChild(productCard);
     });
 
-    // IMPORTANTE: Só atrela os eventos de clique DEPOIS que os botões foram criados!
     attachCartEvents();
   } catch (error) {
     console.error("Erro ao carregar a vitrine:", error);

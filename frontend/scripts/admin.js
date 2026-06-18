@@ -1,28 +1,31 @@
-// Agora a variável existe globalmente
+// ==========================================
+// VARIÁVEIS GLOBAIS
+// ==========================================
 let produtoEmEdicaoId = null;
 let msgProduto = null;
 let btnSubmitProduto = null;
 
+// ==========================================
+// INICIALIZAÇÃO DA PÁGINA
+// ==========================================
 document.addEventListener("DOMContentLoaded", () => {
   const btnLogoutAdmin = document.getElementById("logout-admin");
   if (btnLogoutAdmin) {
     btnLogoutAdmin.addEventListener("click", (e) => {
       e.preventDefault();
-      // Remove os tokens da memória do navegador
       localStorage.removeItem("Token");
       localStorage.removeItem("cart");
-      // Redireciona de volta para a tela de login
       window.location.href = "/pages/login.html";
     });
   }
 
-  // Atribuímos os elementos às variáveis globais recém-criadas
   msgProduto = document.getElementById("produto-mensagem");
   btnSubmitProduto = document.querySelector("#form-add-produto .btn-submit");
 
+  // Carrega os dados assim que a página abre
   loadAdminOrders();
 
-  // Lógica do Formulário de Adicionar Produto (Estoque)
+  // Lógica do Formulário
   const formAddProduto = document.getElementById("form-add-produto");
 
   formAddProduto.addEventListener("submit", async (e) => {
@@ -36,10 +39,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const token =
       localStorage.getItem("token") || localStorage.getItem("Token");
 
-    // Define a URL e o Método dependendo se é Cadastro (POST) ou Edição (PUT)
     const url = produtoEmEdicaoId
       ? `https://api-lojaleila.onrender.com/api/produtos/${produtoEmEdicaoId}`
       : "https://api-lojaleila.onrender.com/api/produtos/criar";
+
     const method = produtoEmEdicaoId ? "PUT" : "POST";
 
     try {
@@ -49,7 +52,13 @@ document.addEventListener("DOMContentLoaded", () => {
         body: formData,
       });
 
-      const data = await response.json();
+      const textData = await response.text();
+      let data = {};
+      try {
+        data = textData ? JSON.parse(textData) : {};
+      } catch (e) {
+        console.error("Resposta não é JSON válido:", textData);
+      }
 
       if (response.ok) {
         msgProduto.style.color = "green";
@@ -57,24 +66,27 @@ document.addEventListener("DOMContentLoaded", () => {
           ? "Roupa atualizada com sucesso!"
           : "Roupa adicionada ao estoque!";
 
-        // Reseta o formulário e volta para o modo "Cadastro"
         formAddProduto.reset();
         produtoEmEdicaoId = null;
         btnSubmitProduto.innerText = "+ Salvar Produto no Estoque";
-
-        carregarProdutos(token); // Atualiza a tabela
+        carregarProdutos(token);
       } else {
         msgProduto.style.color = "red";
-        msgProduto.innerText = data.error || "Erro ao salvar o produto.";
+        msgProduto.innerText =
+          data.error ||
+          `Erro ${response.status}: Rota não encontrada ou erro na API.`;
       }
     } catch (error) {
       console.error("Erro no upload/edição:", error);
       msgProduto.style.color = "red";
-      msgProduto.innerText = "Falha de comunicação com o servidor.";
+      msgProduto.innerText = "Falha grave de comunicação com o servidor.";
     }
   });
-});
+}); // <---- FECHAMENTO CORRETO DO DOMContentLoaded AQUI!
 
+// ==========================================
+// FUNÇÕES GLOBAIS DE LISTAGEM (READ)
+// ==========================================
 async function loadAdminOrders() {
   const token = localStorage.getItem("Token") || localStorage.getItem("token");
 
@@ -84,15 +96,11 @@ async function loadAdminOrders() {
     return;
   }
 
-  // Inicializa as listagens
   carregarProdutos(token);
   carregarClientes(token);
-
-  // AQUI: Esta era a linha que estava comentada e impedia os pedidos de carregarem
   carregarPedidos(token);
 }
 
-// FUNÇÕES DE LISTAGEM (READ)
 async function carregarProdutos(token) {
   const tbody = document.getElementById("lista-admin-produtos");
   tbody.innerHTML = '<tr><td colspan="6">Carregando estoque...</td></tr>';
@@ -180,9 +188,6 @@ async function carregarClientes(token) {
   }
 }
 
-// ==========================================
-// A FUNÇÃO QUE FALTAVA PARA EXIBIR OS PEDIDOS
-// ==========================================
 async function carregarPedidos(token) {
   const tbody = document.getElementById("lista-admin-pedidos");
   tbody.innerHTML = '<tr><td colspan="6">Carregando pedidos...</td></tr>';
@@ -244,6 +249,9 @@ async function carregarPedidos(token) {
   }
 }
 
+// ==========================================
+// FUNÇÕES DE AÇÃO (UPDATE & DELETE)
+// ==========================================
 async function alterarStatusPedido(id, novoStatus, token) {
   try {
     const response = await fetch(
@@ -296,10 +304,6 @@ async function confirmarPix(id, token) {
     alert("Erro de comunicação ao confirmar Pix.");
   }
 }
-
-// ==========================================
-// FUNÇÕES DE AÇÃO (UPDATE & DELETE)
-// ==========================================
 
 async function deletarProduto(id, token) {
   if (
