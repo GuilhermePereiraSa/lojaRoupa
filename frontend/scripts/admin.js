@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const response = await fetch(url, {
         method: method,
-        headers: { Authorization: `Bearer ${token}` }, // Sem Content-Type, o navegador resolve o boundary
+        headers: { Authorization: `Bearer ${token}` },
         body: formData,
       });
 
@@ -87,7 +87,9 @@ async function loadAdminOrders() {
   // Inicializa as listagens
   carregarProdutos(token);
   carregarClientes(token);
-  // carregarPedidos(token); // Se você já tiver a função de pedidos, chame aqui
+
+  // AQUI: Esta era a linha que estava comentada e impedia os pedidos de carregarem
+  carregarPedidos(token);
 }
 
 // FUNÇÕES DE LISTAGEM (READ)
@@ -96,7 +98,6 @@ async function carregarProdutos(token) {
   tbody.innerHTML = '<tr><td colspan="6">Carregando estoque...</td></tr>';
 
   try {
-    // Usa a rota GET /api/produtos que já está pronta para a vitrine
     const response = await fetch(
       "https://api-lojaleila.onrender.com/api/produtos",
     );
@@ -115,23 +116,22 @@ async function carregarProdutos(token) {
         style: "currency",
         currency: "BRL",
       });
-      // Ajuste o caminho da imagem de acordo com o que o Multer salva no banco
       const caminhoImagem = produto.image
         ? produto.image
         : "../img/placeholder.png";
 
       const tr = document.createElement("tr");
       tr.innerHTML = `
-                      <td>#${produto.id}</td>
-                      <td><img src="${caminhoImagem}" alt="${produto.name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;"></td>
-                      <td>${produto.name}</td>
-                      <td>${produto.size}</td>
-                      <td>${precoFormatado}</td>
-                      <td>
-                          <button class="btn-acao btn-editar" onclick="editarProduto(${produto.id})">Editar</button>
-                          <button class="btn-acao btn-deletar" onclick="deletarProduto(${produto.id}, '${token}')">Excluir</button>
-                      </td>
-                  `;
+        <td>#${produto.id}</td>
+        <td><img src="${caminhoImagem}" alt="${produto.name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;"></td>
+        <td>${produto.name}</td>
+        <td>${produto.size}</td>
+        <td>${precoFormatado}</td>
+        <td>
+          <button class="btn-acao btn-editar" onclick="editarProduto(${produto.id})">Editar</button>
+          <button class="btn-acao btn-deletar" onclick="deletarProduto(${produto.id}, '${token}')">Excluir</button>
+        </td>
+      `;
       tbody.appendChild(tr);
     });
   } catch (error) {
@@ -148,7 +148,9 @@ async function carregarClientes(token) {
   try {
     const response = await fetch(
       "https://api-lojaleila.onrender.com/api/auth/usuarios",
-      { headers: { Authorization: `Bearer ${token}` } },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      },
     );
 
     if (!response.ok) throw new Error("Sem permissão ou erro no server");
@@ -162,13 +164,12 @@ async function carregarClientes(token) {
       );
       const tr = document.createElement("tr");
 
-      // Adaptado para os campos reais: username e isAdmin
       tr.innerHTML = `
-          <td>#${cliente.id}</td>
-          <td>${cliente.username}</td>
-          <td>${cliente.email}</td>
-          <td>${cliente.isAdmin ? "Sim (Admin)" : "Não (Cliente)"}</td>
-          <td>${dataCadastro}</td>
+        <td>#${cliente.id}</td>
+        <td>${cliente.username}</td>
+        <td>${cliente.email}</td>
+        <td>${cliente.isAdmin ? "Sim (Admin)" : "Não (Cliente)"}</td>
+        <td>${dataCadastro}</td>
       `;
       tbody.appendChild(tr);
     });
@@ -179,82 +180,14 @@ async function carregarClientes(token) {
   }
 }
 
-// FUNÇÕES DE AÇÃO (UPDATE & DELETE)
-
-async function deletarProduto(id, token) {
-  if (
-    !confirm(
-      "Tem certeza que deseja deletar esta roupa do estoque? Essa ação não pode ser desfeita.",
-    )
-  ) {
-    return; // Cancela se o usuário clicar em "Não"
-  }
-
-  try {
-    const response = await fetch(
-      `https://api-lojaleila.onrender.com/api/produtos/${id}`,
-      {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
-      },
-    );
-
-    if (response.ok) {
-      alert("Roupa removida do estoque com sucesso.");
-      carregarProdutos(token); // Recarrega a tabela para sumir com o item
-    } else {
-      const data = await response.json();
-      alert(`Erro ao excluir: ${data.error || "Tente novamente."}`);
-    }
-  } catch (error) {
-    console.error("Erro ao deletar:", error);
-    alert("Falha de conexão ao tentar deletar o produto.");
-  }
-}
-
-async function editarProduto(id) {
-  // Rola a página para cima suavemente para a Dona Leila ver o formulário
-  window.scrollTo({ top: 0, behavior: "smooth" });
-
-  try {
-    // Busca os dados atuais daquele produto específico no back-end
-    const response = await fetch(
-      `https://api-lojaleila.onrender.com/api/produtos/${id}`,
-    );
-
-    if (!response.ok) throw new Error("Erro ao buscar dados do produto");
-
-    const produto = await response.json();
-
-    // Preenche os inputs com os dados do banco
-    document.getElementById("nomeProduto").value = produto.name;
-    document.getElementById("precoProduto").value = produto.price;
-    document.getElementById("tamanhoProduto").value = produto.size;
-    document.getElementById("estoqueProduto").value = produto.stock;
-    //document.getElementById("descricaoProduto").value = produto.description;
-
-    // A imagem não pode ser preenchida automaticamente
-    document.getElementById("imagemProduto").removeAttribute("required");
-
-    // Altera o estado da variável global e o texto do botão
-    produtoEmEdicaoId = id;
-    if (btnSubmitProduto) btnSubmitProduto.innerText = "🔄 Atualizar Produto";
-    if (msgProduto) {
-      msgProduto.innerText = "Editando produto ID: " + id;
-      msgProduto.style.color = "#ffc107";
-    }
-  } catch (error) {
-    console.error("Erro ao entrar em modo de edição:", error);
-    alert("Não foi possível carregar os dados desta roupa para edição.");
-  }
-}
-
+// ==========================================
+// A FUNÇÃO QUE FALTAVA PARA EXIBIR OS PEDIDOS
+// ==========================================
 async function carregarPedidos(token) {
   const tbody = document.getElementById("lista-admin-pedidos");
   tbody.innerHTML = '<tr><td colspan="6">Carregando pedidos...</td></tr>';
 
   try {
-    // Busca todos os pedidos do admin
     const response = await fetch(
       "https://api-lojaleila.onrender.com/api/pedidos/admin",
       {
@@ -289,7 +222,7 @@ async function carregarPedidos(token) {
         <td>${dataPedido}</td>
         <td>${total}</td>
         <td>
-          <select class="status-select" onchange="alterarStatusPedido(${pedido.id}, this.value, '${token}')">
+          <select class="status-select" onchange="alterarStatusPedido(${pedido.id}, this.value, '${token}')" style="padding: 5px; border-radius: 4px;">
             <option value="Pendente" ${pedido.status === "Pendente" ? "selected" : ""}>Pendente</option>
             <option value="Pago" ${pedido.status === "Pago" ? "selected" : ""}>Pago</option>
             <option value="Sem Estoque" ${pedido.status === "Sem Estoque" ? "selected" : ""}>Sem Estoque</option>
@@ -299,7 +232,7 @@ async function carregarPedidos(token) {
           </select>
         </td>
         <td>
-           ${pedido.status === "Pendente" ? `<button class="btn-acao btn-editar" style="background-color: #28a745;" onclick="confirmarPix(${pedido.id}, '${token}')">Confirmar Pix</button>` : "Nenhuma"}
+           ${pedido.status === "Pendente" ? `<button class="btn-acao btn-editar" style="background-color: #28a745; color: white;" onclick="confirmarPix(${pedido.id}, '${token}')">Confirmar Pix</button>` : "Nenhuma"}
         </td>
       `;
       tbody.appendChild(tr);
@@ -311,7 +244,6 @@ async function carregarPedidos(token) {
   }
 }
 
-// Função para a Dona Leila atualizar a logística manualmente (ex: Saiu para Entrega)
 async function alterarStatusPedido(id, novoStatus, token) {
   try {
     const response = await fetch(
@@ -337,7 +269,6 @@ async function alterarStatusPedido(id, novoStatus, token) {
   }
 }
 
-// Função para confirmar o pagamento manual do Pix
 async function confirmarPix(id, token) {
   if (
     !confirm(
@@ -349,7 +280,7 @@ async function confirmarPix(id, token) {
     const response = await fetch(
       `https://api-lojaleila.onrender.com/api/pedidos/${id}/confirmar-pagamento`,
       {
-        method: "PUT", // ou POST, dependendo de como você definiu a rota do confirmOrderPayment
+        method: "PUT",
         headers: { Authorization: `Bearer ${token}` },
       },
     );
@@ -363,5 +294,71 @@ async function confirmarPix(id, token) {
     }
   } catch (error) {
     alert("Erro de comunicação ao confirmar Pix.");
+  }
+}
+
+// ==========================================
+// FUNÇÕES DE AÇÃO (UPDATE & DELETE)
+// ==========================================
+
+async function deletarProduto(id, token) {
+  if (
+    !confirm(
+      "Tem certeza que deseja deletar esta roupa do estoque? Essa ação não pode ser desfeita.",
+    )
+  ) {
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      `https://api-lojaleila.onrender.com/api/produtos/${id}`,
+      {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      },
+    );
+
+    if (response.ok) {
+      alert("Roupa removida do estoque com sucesso.");
+      carregarProdutos(token);
+    } else {
+      const data = await response.json();
+      alert(`Erro ao excluir: ${data.error || "Tente novamente."}`);
+    }
+  } catch (error) {
+    console.error("Erro ao deletar:", error);
+    alert("Falha de conexão ao tentar deletar o produto.");
+  }
+}
+
+async function editarProduto(id) {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+
+  try {
+    const response = await fetch(
+      `https://api-lojaleila.onrender.com/api/produtos/${id}`,
+    );
+
+    if (!response.ok) throw new Error("Erro ao buscar dados do produto");
+
+    const produto = await response.json();
+
+    document.getElementById("nomeProduto").value = produto.name;
+    document.getElementById("precoProduto").value = produto.price;
+    document.getElementById("tamanhoProduto").value = produto.size;
+    document.getElementById("estoqueProduto").value = produto.stock;
+
+    document.getElementById("imagemProduto").removeAttribute("required");
+
+    produtoEmEdicaoId = id;
+    if (btnSubmitProduto) btnSubmitProduto.innerText = "🔄 Atualizar Produto";
+    if (msgProduto) {
+      msgProduto.innerText = "Editando produto ID: " + id;
+      msgProduto.style.color = "#ffc107";
+    }
+  } catch (error) {
+    console.error("Erro ao entrar em modo de edição:", error);
+    alert("Não foi possível carregar os dados desta roupa para edição.");
   }
 }
