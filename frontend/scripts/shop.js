@@ -54,20 +54,24 @@ async function fetchProducts() {
       productCard.className = "pro";
 
       productCard.innerHTML = `
-        <img src="${imageUrl}" alt="${produto.name}" style="width: 100%; border-radius: 20px;">
-        <div class="des">
-          <span>Tamanho: ${produto.size}</span>
-          <h5>${produto.name}</h5>
-          <h4>R$ ${precoNum.toFixed(2).replace(".", ",")}</h4>
-        </div>
-        <div class="cart-actions" style="margin-top: 10px;">
-          <button class="qty-decrease" data-id="${produto.id}">-</button>
-          <input type="number" min="1" class="qty-input" data-id="${produto.id}" value="1" readonly style="width: 40px; text-align: center;" />
-          <button class="qty-increase" data-id="${produto.id}">+</button>
-          <br><br>
-          <button class="add-to-cart" data-id="${produto.id}" data-name="${produto.name}">Adicionar ao Carrinho</button>
-        </div>
-      `;
+              <img src="${imageUrl}" alt="${produto.name}" style="width: 100%; border-radius: 20px;">
+              <div class="des">
+                <span>Tamanho: ${produto.size}</span>
+                <h5>${produto.name}</h5>
+                <h4>R$ ${precoNum.toFixed(2).replace(".", ",")}</h4>
+              </div>
+
+              <div class="qty-controls" style="justify-content: center; width: 100%; margin-top: 5px;">
+                <button class="qty-decrease" data-id="${produto.id}">-</button>
+                <input type="number" min="1" class="qty-input" data-id="${produto.id}" value="1" readonly />
+                <button class="qty-increase" data-id="${produto.id}">+</button>
+              </div>
+
+              <button class="add-to-cart" data-id="${produto.id}" data-name="${produto.name}"
+                style="width: 100%; padding: 10px; margin-top: 5px; background-color: #088178; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; transition: 0.3s;">
+                Adicionar ao Carrinho
+              </button>
+            `;
 
       container.appendChild(productCard);
     });
