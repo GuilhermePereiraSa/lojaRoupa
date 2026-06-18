@@ -29,15 +29,11 @@ class AuthConfig {
     const navBar = document.getElementById("navbar");
     if (!navBar) return;
 
-    // Identifica o ícone do carrinho para inserir os novos botões ANTES dele
-    const cartIcon = navBar.querySelector(".ri-shopping-bag-line");
-    const cartLi = cartIcon ? cartIcon.closest("li") : null;
-
-    // Verifica qual é o caminho atual da página para definir o link 'active'
+    // Verifica qual é o caminho atual da página
     const currentPath = window.location.pathname;
 
     if (this.token && this.payload) {
-      // 1. Adiciona o botão de Perfil
+      // 1. Adiciona o botão de Perfil (Como o carrinho já está no HTML, o Perfil entra DEPOIS dele)
       const PerfilLi = document.createElement("li");
       const isProfileActive =
         currentPath.includes("profile.html") ||
@@ -45,9 +41,7 @@ class AuthConfig {
           ? 'class="active"'
           : "";
       PerfilLi.innerHTML = `<a ${isProfileActive} href="/pages/profile.html">Meu Perfil</a>`;
-
-      if (cartLi) navBar.insertBefore(PerfilLi, cartLi);
-      else navBar.appendChild(PerfilLi);
+      navBar.appendChild(PerfilLi);
 
       // 2. Adiciona o Painel Admin (se tiver permissão)
       if (this.payload.isAdmin === true) {
@@ -56,17 +50,13 @@ class AuthConfig {
           ? 'class="active"'
           : "";
         AdminLi.innerHTML = `<a ${isAdminActive} href="/pages/admin.html">Painel Admin</a>`;
-
-        if (cartLi) navBar.insertBefore(AdminLi, cartLi);
-        else navBar.appendChild(AdminLi);
+        navBar.appendChild(AdminLi);
       }
 
-      // 3. Adiciona o botão de Sair
+      // 3. Adiciona o botão de Sair por último
       const LogoutLi = document.createElement("li");
       LogoutLi.innerHTML = `<a href="#" id="logout-btn">Sair</a>`;
-
-      if (cartLi) navBar.insertBefore(LogoutLi, cartLi);
-      else navBar.appendChild(LogoutLi);
+      navBar.appendChild(LogoutLi);
 
       // Lógica de terminar sessão
       const logoutBtn = document.getElementById("logout-btn");
@@ -83,22 +73,18 @@ class AuthConfig {
         ? 'class="active"'
         : "";
       LogIn.innerHTML = `<a ${isLoginActive} href="/pages/login.html">Entrar</a>`;
-
-      if (cartLi) navBar.insertBefore(LogIn, cartLi);
-      else navBar.appendChild(LogIn);
+      navBar.appendChild(LogIn);
     }
   }
 
   logOut() {
     localStorage.clear();
-    // Caminho absoluto para o redirecionamento funcionar em qualquer ecrã
     window.location.href = "/pages/login.html";
   }
 }
 
 const authConfig = new AuthConfig();
 
-// Setup mobile menu toggle
 function setupMobileMenu() {
   const header = document.getElementById("header");
   const navBar = document.getElementById("navbar");
@@ -108,7 +94,7 @@ function setupMobileMenu() {
     const btn = document.createElement("button");
     btn.id = "menu-toggle";
     btn.setAttribute("aria-label", "Toggle menu");
-    btn.innerHTML = "&#9776;"; // hamburger
+    btn.innerHTML = "&#9776;";
     header.appendChild(btn);
 
     btn.addEventListener("click", (e) => {
