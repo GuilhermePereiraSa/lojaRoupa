@@ -248,3 +248,120 @@ async function editarProduto(id) {
     alert("Não foi possível carregar os dados desta roupa para edição.");
   }
 }
+
+async function carregarPedidos(token) {
+  const tbody = document.getElementById("lista-admin-pedidos");
+  tbody.innerHTML = '<tr><td colspan="6">Carregando pedidos...</td></tr>';
+
+  try {
+    // Busca todos os pedidos do admin
+    const response = await fetch(
+      "https://api-lojaleila.onrender.com/api/pedidos/admin",
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      },
+    );
+
+    if (!response.ok) throw new Error("Erro ao carregar pedidos");
+
+    const pedidos = await response.json();
+    tbody.innerHTML = "";
+
+    if (pedidos.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6">Nenhum pedido recente.</td></tr>';
+      return;
+    }
+
+    pedidos.forEach((pedido) => {
+      const dataPedido = new Date(pedido.createdAt).toLocaleDateString("pt-BR");
+      const total = Number(pedido.totalPrice).toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+      });
+      const nomeCliente = pedido.User
+        ? pedido.User.username
+        : `Cliente #${pedido.userId}`;
+
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>#${pedido.id}</td>
+        <td>${nomeCliente}</td>
+        <td>${dataPedido}</td>
+        <td>${total}</td>
+        <td>
+          <select class="status-select" onchange="alterarStatusPedido(${pedido.id}, this.value, '${token}')">
+            <option value="Pendente" ${pedido.status === "Pendente" ? "selected" : ""}>Pendente</option>
+            <option value="Pago" ${pedido.status === "Pago" ? "selected" : ""}>Pago</option>
+            <option value="Sem Estoque" ${pedido.status === "Sem Estoque" ? "selected" : ""}>Sem Estoque</option>
+            <option value="Pronto para Retirada" ${pedido.status === "Pronto para Retirada" ? "selected" : ""}>Pronto para Retirada</option>
+            <option value="Saiu para Entrega" ${pedido.status === "Saiu para Entrega" ? "selected" : ""}>Saiu para Entrega</option>
+            <option value="Finalizado" ${pedido.status === "Finalizado" ? "selected" : ""}>Finalizado</option>
+          </select>
+        </td>
+        <td>
+           ${pedido.status === "Pendente" ? `<button class="btn-acao btn-editar" style="background-color: #28a745;" onclick="confirmarPix(${pedido.id}, '${token}')">Confirmar Pix</button>` : "Nenhuma"}
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  } catch (error) {
+    console.error("Erro ao listar pedidos:", error);
+    tbody.innerHTML =
+      '<tr><td colspan="6" style="color: red;">Erro ao listar pedidos.</td></tr>';
+  }
+}
+
+// Função para a Dona Leila atualizar a logística manualmente (ex: Saiu para Entrega)
+async function alterarStatusPedido(id, novoStatus, token) {
+  try {
+    const response = await fetch(
+      `https://api-lojaleila.onrender.com/api/pedidos/${id}/status`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ status: novoStatus }),
+      },
+    );
+
+    if (response.ok) {
+      alert("Status do pedido atualizado com sucesso!");
+    } else {
+      const error = await response.json();
+      alert("Erro ao atualizar: " + error.error);
+    }
+  } catch (error) {
+    alert("Erro de comunicação ao atualizar status.");
+  }
+}
+
+// Função para confirmar o pagamento manual do Pix
+async function confirmarPix(id, token) {
+  if (
+    !confirm(
+      "Deseja confirmar o pagamento manual deste pedido? O estoque será debitado.",
+    )
+  )
+    return;
+  try {
+    const response = await fetch(
+      `https://api-lojaleila.onrender.com/api/pedidos/${id}/confirmar-pagamento`,
+      {
+        method: "PUT", // ou POST, dependendo de como você definiu a rota do confirmOrderPayment
+        headers: { Authorization: `Bearer ${token}` },
+      },
+    );
+
+    if (response.ok) {
+      alert("Pagamento Pix confirmado!");
+      carregarPedidos(token); // Atualiza a tabela
+    } else {
+      const error = await response.json();
+      alert("Erro: " + error.error);
+    }
+  } catch (error) {
+    alert("Erro de comunicação ao confirmar Pix.");
+  }
+}

@@ -20,32 +20,36 @@
             href="path/to/font-awesome/css/font-awesome.min.css"
         />
 
+        <link rel="stylesheet" href="../css/style.css" />
         <link rel="stylesheet" href="../css/admin.css" />
 
         <script src="../scripts/init.js" defer></script>
     </head>
     <body>
-        <div class="admin-container">
-            <header class="admin-header">
-                <div class="logo-area">
-                    <a href="../index.html" class="logo">
-                        <img src="../img/logo.png" alt="Loja Olinda Leila" />
-                    </a>
-                    <h2>Painel de Controle</h2>
+            <section id="header">
+                <a href="../index.html" class="logo">
+                    <img src="../img/logo.png" alt="Loja Olinda Leila" />
+                </a>
+
+                <div>
+                    <ul id="navbar">
+                        <li><a href="../index.html">Início</a></li>
+                        <li><a href="shop.html">Loja Leila</a></li>
+                        <li><a href="about.html">Sobre</a></li>
+                        <li><a href="contact.html">Contato</a></li>
+                        <li>
+                            <a href="cart.html"><i class="ri-shopping-bag-line"></i></a>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
+            <div class="admin-container">
+                <div style="text-align: center; margin: 20px 0;">
+                    <h2 style="color: #065a52;">Painel de Controle</h2>
                 </div>
 
-                <ul id="navbar">
-                    <li><a href="../index.html">Início</a></li>
-                    <li><a href="shop.html">Loja Leila</a></li>
-                    <li><a href="about.html">Sobre</a></li>
-                    <li><a href="contact.html">Contato</a></li>
-                    <li>
-                        <a class="active" href="cart.html"
-                            ><i class="ri-shopping-bag-line"></i
-                        ></a>
-                    </li>
-                </ul>
-            </header>
+                <nav class="tabs">
 
             <nav class="tabs">
                 <button

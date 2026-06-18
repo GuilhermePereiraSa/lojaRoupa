@@ -1,92 +1,84 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const token = localStorage.getItem("Token");
+  carregarDadosPerfil();
+  carregarHistoricoPedidos();
+});
+
+async function carregarDadosPerfil() {
+  const token = localStorage.getItem("Token") || localStorage.getItem("token");
 
   if (!token) {
+    alert("Você precisa estar logado para ver seu perfil.");
     window.location.href = "login.html";
     return;
   }
 
-  carregarDadosPerfil(token);
-  carregarHistoricoPedidos(token);
-});
-
-async function carregarDadosPerfil(token) {
   try {
     const response = await fetch(
       "https://api-lojaleila.onrender.com/api/auth/perfil",
       {
-        method: "GET",
         headers: { Authorization: `Bearer ${token}` },
       },
     );
 
     if (response.ok) {
       const usuario = await response.json();
-      document.getElementById("user-name").innerText = usuario.username;
-      document.getElementById("user-email").innerText = usuario.email;
-
       document.getElementById("dados-carregando").style.display = "none";
       document.getElementById("dados-usuario").style.display = "block";
+
+      document.getElementById("user-name").textContent = usuario.username;
+      document.getElementById("user-email").textContent = usuario.email;
     } else {
-      document.getElementById("dados-carregando").innerText =
-        "Erro ao carregar dados do perfil.";
+      document.getElementById("dados-carregando").textContent =
+        "Erro ao carregar dados. Faça login novamente.";
     }
   } catch (error) {
-    console.error("Erro ao buscar perfil:", error);
-    document.getElementById("dados-carregando").innerText = "Erro de conexão.";
+    console.error("Erro no perfil:", error);
   }
 }
 
-async function carregarHistoricoPedidos(token) {
+async function carregarHistoricoPedidos() {
+  const token = localStorage.getItem("Token") || localStorage.getItem("token");
   const listaPedidos = document.getElementById("lista-pedidos");
-  const msgPedidos = document.getElementById("pedidos-mensagem");
 
   try {
     const response = await fetch(
-      "https://api-lojaleila.onrender.com/api/pedidos/meus",
+      "https://api-lojaleila.onrender.com/api/pedidos",
       {
-        method: "GET",
         headers: { Authorization: `Bearer ${token}` },
       },
     );
 
-    if (!response.ok) {
-      throw new Error("Erro ao buscar histórico.");
-    }
+    if (!response.ok) throw new Error("Falha ao buscar pedidos");
 
     const pedidos = await response.json();
 
     if (pedidos.length === 0) {
-      msgPedidos.innerText = "Você ainda não realizou nenhum pedido.";
-      document.getElementById("tabela-pedidos").style.display = "none";
+      listaPedidos.innerHTML =
+        "<tr><td colspan='4'>Você ainda não fez nenhum pedido.</td></tr>";
       return;
     }
-
-    listaPedidos.innerHTML = "";
 
     pedidos.forEach((pedido) => {
       const dataFormatada = new Date(pedido.createdAt).toLocaleDateString(
         "pt-BR",
       );
-      const totalFormatado = Number(pedido.totalPrice).toLocaleString("pt-BR", {
+      const total = Number(pedido.totalPrice).toLocaleString("pt-BR", {
         style: "currency",
         currency: "BRL",
       });
-      const statusClass = `status-${pedido.status.toLowerCase()}`;
 
       const tr = document.createElement("tr");
       tr.innerHTML = `
-                <td>#${pedido.id}</td>
-                <td>${dataFormatada}</td>
-                <td>${totalFormatado}</td>
-                <td><span class="status-badge ${statusClass}">${pedido.status}</span></td>
-            `;
+        <td>#${pedido.id}</td>
+        <td>${dataFormatada}</td>
+        <td>${total}</td>
+        <td><strong style="color: #e02a64;">${pedido.status}</strong></td>
+      `;
       listaPedidos.appendChild(tr);
     });
   } catch (error) {
-    console.error("Erro ao carregar pedidos:", error);
-    msgPedidos.innerText =
-      "Não foi possível carregar seu histórico de pedidos.";
-    document.getElementById("tabela-pedidos").style.display = "none";
+    console.error("Erro ao carregar histórico:", error);
+    listaPedidos.innerHTML =
+      "<tr><td colspan='4'>Erro ao carregar histórico de pedidos.</td></tr>";
   }
 }
