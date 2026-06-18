@@ -23,11 +23,12 @@ body {
     align-items: center;
 }
 
-.carousel {
-    position: relative;
-    width: 50%;
-    overflow: hidden;
-}
+ .carousel {
+     position: relative;
+     width: 35%;
+     overflow: hidden;
+     height: 80vh; /* portrait format: height greater than width */
+ }
 
 .carousel-inner {
     display: flex;
@@ -45,8 +46,9 @@ body {
 
 .carousel-item img {
     width: 100%;
-    height: 400px;
-    object-fit: cover;
+    height: 100%;
+    object-fit: cover; /* fill portrait container for better visual */
+    display: block;
 }
 
 .carousel-control {
@@ -127,18 +129,32 @@ body {
     position: relative;
 }
 
+/* make product cards uniform */
+.pro {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 480px;
+}
+
 .pro:hover {
     box-shadow: 20px 20px 30px rgba(0,0,0,0.06);
 }
 
 .pro img {
     width: 100%;
-    border-radius: 20px;
+    height: 320px;
+    object-fit: cover;
+    border-radius: 16px;
 }
 
 .pro .des {
     text-align: start;
     padding: 10px 0;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .pro .des span {
@@ -196,9 +212,14 @@ body {
     }
     .carousel {
         width: 80%;
+        height: 40vh;
     }
-    .carousel-item img {
-        width: 100%;
-        height: 200px;
+    .pro {
+        width: 46%;
+        min-width: 160px;
+        height: auto;
+    }
+    .pro img {
+        height: 220px;
     }
 }
