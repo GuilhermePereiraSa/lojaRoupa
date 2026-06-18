@@ -1,3 +1,69 @@
+// Carrega os produtos assim que a página terminar de carregar o HTML
+document.addEventListener("DOMContentLoaded", () => {
+  fetchProducts();
+});
+
+async function fetchProducts() {
+  const container = document.querySelector(".pro-container");
+
+  try {
+    // ⚠️ Atenção: Certifique-se de que esta é a rota GET correta da sua API para listar as roupas
+    const response = await fetch(
+      "https://api-lojaleila.onrender.com/api/produtos",
+    );
+
+    if (!response.ok) throw new Error("Erro ao buscar produtos do servidor");
+
+    const products = await response.json();
+    container.innerHTML = ""; // Limpa o container antes de renderizar
+
+    if (products.length === 0) {
+      container.innerHTML =
+        "<p style='text-align: center; width: 100%;'>Nenhuma roupa cadastrada no momento.</p>";
+      return;
+    }
+
+    products.forEach((produto) => {
+      // Formatação da imagem
+      const imageUrl =
+        produto.image && produto.image.startsWith("/public")
+          ? `https://api-lojaleila.onrender.com${produto.image}`
+          : produto.image;
+
+      const precoNum = parseFloat(produto.price);
+
+      const productCard = document.createElement("div");
+      productCard.className = "pro";
+
+      // Constrói o HTML do card do produto
+      productCard.innerHTML = `
+        <img src="${imageUrl}" alt="${produto.name}" style="width: 100%; border-radius: 20px;">
+        <div class="des">
+          <span>Tamanho: ${produto.size}</span>
+          <h5>${produto.name}</h5>
+          <h4>R$ ${precoNum.toFixed(2).replace(".", ",")}</h4>
+        </div>
+        <div class="cart-actions" style="margin-top: 10px;">
+          <button class="qty-decrease" data-id="${produto.id}">-</button>
+          <input type="number" min="1" class="qty-input" data-id="${produto.id}" value="1" readonly style="width: 40px; text-align: center;" />
+          <button class="qty-increase" data-id="${produto.id}">+</button>
+          <br><br>
+          <button class="add-to-cart" data-id="${produto.id}" data-name="${produto.name}">Adicionar ao Carrinho</button>
+        </div>
+      `;
+
+      container.appendChild(productCard);
+    });
+
+    // IMPORTANTE: Só atrela os eventos de clique DEPOIS que os botões foram criados!
+    attachCartEvents();
+  } catch (error) {
+    console.error("Erro ao carregar a vitrine:", error);
+    container.innerHTML =
+      "<p>Erro ao carregar os produtos. Tente novamente mais tarde.</p>";
+  }
+}
+
 function attachCartEvents() {
   const addToCartButtons = document.querySelectorAll(".add-to-cart");
   addToCartButtons.forEach((button) => {
