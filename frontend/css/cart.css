@@ -55,7 +55,7 @@ body {
     cursor: pointer;
 }
 
-.cart-item button:hover {
+.cart-item button .remove-btn:hover{
     background: #cc0000;
 }
 
